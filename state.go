@@ -81,7 +81,8 @@ type State struct {
 	remoteVersions []protocol.Version
 	// localKeyEntries are the DTLS 1.3 KeyShareEntry values generated locally
 	// and sent in the ClientHello's key_share extension.
-	localKeyEntries []extension.KeyShareEntry
+	localKeyEntries  []extension.KeyShareEntry
+	remoteKeyEntries []extension.KeyShareEntry
 }
 
 type serializedState struct {
