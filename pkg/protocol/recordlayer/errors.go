@@ -21,4 +21,8 @@ var (
 	errSequenceNumberOverflow     = &protocol.InternalError{Err: errors.New("sequence number overflow")}  //nolint:err113
 	errUnsupportedProtocolVersion = &protocol.FatalError{Err: errors.New("unsupported protocol version")} //nolint:err113
 	errInvalidContentType         = &protocol.TemporaryError{Err: errors.New("invalid content type")}     //nolint:err113
+	errInvalidEpoch               = &protocol.InternalError{Err: errors.New("invalid epoch")}             //nolint:err113
+
+	errCIDTooBig                  = &protocol.InternalError{Err: errors.New("connection ID size is too big")}       //nolint:err113
+	errInvalidUnifiedHeaderFormat = &protocol.FatalError{Err: errors.New("invalid dtls 1.3 unified header format")} //nolint:err113
 )
