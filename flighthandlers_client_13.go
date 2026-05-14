@@ -4,6 +4,8 @@
 package dtls
 
 import (
+	"slices"
+
 	"github.com/pion/dtls/v3/pkg/crypto/elliptic"
 	"github.com/pion/dtls/v3/pkg/protocol"
 	"github.com/pion/dtls/v3/pkg/protocol/alert"
@@ -137,6 +139,128 @@ func flight13_1Generate(
 		Version:   protocol.Version1_2,
 		SessionID: state.SessionID,
 		Cookie:    state.cookie,
+		Random:    state.localRandom,
+		// Add DTLS 1.3 ciphersuites
+		CipherSuiteIDs:     cipherSuiteIDs(cfg.localCipherSuites),
+		CompressionMethods: defaultCompressionMethods(),
+		Extensions:         extensions,
+	}
+
+	var content handshake.Handshake
+
+	if cfg.clientHelloMessageHook != nil {
+		content = handshake.Handshake{Message: cfg.clientHelloMessageHook(*clientHello)}
+	} else {
+		content = handshake.Handshake{Message: clientHello}
+	}
+
+	return []*packet{
+		{
+			record: &recordlayer.RecordLayer{
+				Header: recordlayer.Header{
+					Version: protocol.Version1_2,
+				},
+				Content: &content,
+			},
+		},
+	}, nil, nil
+}
+
+// nolint:unused,unparam,cyclop
+func flight13_3Generate(
+	_ flightConn,
+	state *State,
+	_ *handshakeCache,
+	cfg *handshakeConfig,
+) ([]*packet, *alert.Alert, error) {
+	extensions := []extension.Extension{}
+
+	if cfg.extendedMasterSecret == RequestExtendedMasterSecret ||
+		cfg.extendedMasterSecret == RequireExtendedMasterSecret {
+		extensions = append(extensions, &extension.UseExtendedMasterSecret{
+			Supported: true,
+		})
+	}
+
+	extensions = append(extensions, &extension.RenegotiationInfo{
+		RenegotiatedConnection: 0,
+	})
+
+	if state.namedCurve != 0 {
+		extensions = append(extensions, []extension.Extension{
+			&extension.SupportedEllipticCurves{
+				EllipticCurves: cfg.ellipticCurves,
+			},
+			&extension.SupportedPointFormats{
+				PointFormats: []elliptic.CurvePointFormat{elliptic.CurvePointFormatUncompressed},
+			},
+		}...)
+	}
+
+	if len(cfg.supportedProtocols) > 0 {
+		extensions = append(extensions, &extension.ALPN{ProtocolNameList: cfg.supportedProtocols})
+	}
+
+	var localGroups []elliptic.Curve
+	for _, entry := range state.remoteKeyEntries {
+		localGroups = append(localGroups, entry.Group)
+	}
+
+	var newEntries []extension.KeyShareEntry
+	for _, entry := range state.remoteKeyEntries {
+		// Server announces curve we did not send in our initial CH and we support it
+		if !slices.Contains(localGroups, entry.Group) && slices.Contains(cfg.ellipticCurves, entry.Group) {
+			keypair, err := elliptic.GenerateKeypair(entry.Group)
+			if err != nil {
+				return nil, nil, err
+			}
+			newEntries = append(newEntries, extension.KeyShareEntry{
+				Group: keypair.Curve, KeyExchange: keypair.PublicKey,
+			})
+		}
+	}
+	// Prioritize remote curves
+	if len(newEntries) > 0 {
+		state.localKeyEntries = append(newEntries, state.localKeyEntries...)
+	}
+	extensions = append(extensions, &extension.KeyShare{
+		ClientShares: state.localKeyEntries,
+	})
+
+	if !slices.Contains(state.remoteVersions, protocol.Version1_3) {
+		return nil, nil, errNoCommonProtocolVersion
+	}
+	extensions = append(extensions, &extension.SupportedVersions{
+		Versions: supportedVersionsRange(cfg.minVersion, cfg.maxVersion),
+	})
+
+	if len(cfg.localCertSignatureSchemes) > 0 {
+		extensions = append(extensions, &extension.SignatureAlgorithmsCert{
+			SignatureHashAlgorithms: cfg.localCertSignatureSchemes,
+		})
+	}
+
+	if len(cfg.serverName) > 0 {
+		extensions = append(extensions, &extension.ServerName{ServerName: cfg.serverName})
+	}
+
+	if len(cfg.localSRTPProtectionProfiles) > 0 {
+		extensions = append(extensions, &extension.UseSRTP{
+			ProtectionProfiles:  cfg.localSRTPProtectionProfiles,
+			MasterKeyIdentifier: cfg.localSRTPMasterKeyIdentifier,
+		})
+	}
+
+	if len(state.cookie) > 0 {
+		extensions = append(extensions, &extension.CookieExt{Cookie: state.cookie})
+	}
+
+	// connection ID
+
+	clientHello := &handshake.MessageClientHello{
+		Version:   protocol.Version1_2,
+		SessionID: state.SessionID,
+		Cookie:    []byte{},
 		Random:    state.localRandom,
 		// Add DTLS 1.3 ciphersuites
 		CipherSuiteIDs:     cipherSuiteIDs(cfg.localCipherSuites),
