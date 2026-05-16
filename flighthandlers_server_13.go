@@ -4,7 +4,6 @@
 package dtls
 
 import (
-	"bytes"
 	"context"
 
 	"github.com/pion/dtls/v3/pkg/protocol"
