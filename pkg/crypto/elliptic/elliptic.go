@@ -6,9 +6,7 @@ package elliptic
 
 import (
 	"crypto/ecdh"
-	"crypto/rand"
 	"errors"
-	"fmt"
 )
 
 var errInvalidNamedCurve = errors.New("invalid named curve")
@@ -41,11 +39,7 @@ const (
 )
 
 // CurveTypes returns all known curves.
-func CurveTypes() map[CurveType]struct{} {
-	return map[CurveType]struct{}{
-		CurveTypeNamedCurve: {},
-	}
-}
+func CurveTypes() map[CurveType]struct{} { _ = "STUB: not implemented"; return nil }
 
 // Curve is used to represent the IANA registered curves for TLS
 //
@@ -63,59 +57,19 @@ const (
 	// https://datatracker.ietf.org/doc/draft-ietf-tls-ecdhe-mlkem/
 )
 
-func (c Curve) String() string {
-	switch c {
-	case P256:
-		return "P-256"
-	case P384:
-		return "P-384"
-	case X25519:
-		return "X25519"
-	}
-
-	return fmt.Sprintf("%#x", uint16(c))
-}
+func (c Curve) String() string { _ = "STUB: not implemented"; return "" }
 
 // Curves returns all curves we implement.
-func Curves() map[Curve]bool {
-	return map[Curve]bool{
-		X25519: true,
-		P256:   true,
-		P384:   true,
-	}
-}
+func Curves() map[Curve]bool { _ = "STUB: not implemented"; return nil }
 
 // GenerateKeypair generates a keypair for the given Curve.
-func GenerateKeypair(curve Curve) (*Keypair, error) {
-	ec, err := curve.toECDH()
-	if err != nil {
-		return nil, err
-	}
+func GenerateKeypair(curve Curve) (*Keypair, error) { _ = "STUB: not implemented"; return nil, nil }
 
-	sk, err := ec.GenerateKey(rand.Reader)
-	if err != nil {
-		return nil, err
-	}
-
-	pk := sk.PublicKey()
-
-	return &Keypair{
-		Curve:      curve,
-		PublicKey:  pk.Bytes(), // NIST: SEC1 uncompressed (04||X||Y); X25519: 32 bytes
-		PrivateKey: sk.Bytes(), // Scalar suitable for ecdh.NewPrivateKey
-	}, nil
-}
+// NIST: SEC1 uncompressed (04||X||Y); X25519: 32 bytes
+// Scalar suitable for ecdh.NewPrivateKey
 
 // toECDH returns the crypto/ecdh curve for our enum.
 func (c Curve) toECDH() (ecdh.Curve, error) {
-	switch c {
-	case X25519:
-		return ecdh.X25519(), nil
-	case P256:
-		return ecdh.P256(), nil
-	case P384:
-		return ecdh.P384(), nil
-	default:
-		return nil, errInvalidNamedCurve
-	}
+	_ = "STUB: not implemented"
+	return *new(ecdh.Curve), nil
 }

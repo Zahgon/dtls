@@ -4,8 +4,6 @@
 package ciphersuite
 
 import (
-	"crypto/sha256"
-	"fmt"
 	"hash"
 	"sync/atomic"
 
@@ -22,43 +20,54 @@ type TLSEcdheEcdsaWithChacha20Poly1305Sha256 struct {
 
 // CertificateType returns what type of certificate this CipherSuite exchanges.
 func (c *TLSEcdheEcdsaWithChacha20Poly1305Sha256) CertificateType() clientcertificate.Type {
-	return clientcertificate.ECDSASign
+	_ = "STUB: not implemented"
+	return *new(clientcertificate.Type)
 }
 
 // KeyExchangeAlgorithm controls what key exchange algorithm is using during the handshake.
 func (c *TLSEcdheEcdsaWithChacha20Poly1305Sha256) KeyExchangeAlgorithm() KeyExchangeAlgorithm {
-	return KeyExchangeAlgorithmEcdhe
+	_ = "STUB: not implemented"
+	return *new(KeyExchangeAlgorithm)
 }
 
 // ECC uses Elliptic Curve Cryptography.
 func (c *TLSEcdheEcdsaWithChacha20Poly1305Sha256) ECC() bool {
-	return true
+	_ = "STUB: not implemented"
+
+	// ID returns the ID of the CipherSuite.
+	return false
 }
 
-// ID returns the ID of the CipherSuite.
 func (c *TLSEcdheEcdsaWithChacha20Poly1305Sha256) ID() ID {
-	return TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256
+	_ = "STUB: not implemented"
+	return *new(ID)
 }
 
 // String returns the string representation of the cipher's ID.
 func (c *TLSEcdheEcdsaWithChacha20Poly1305Sha256) String() string {
-	return c.ID().String()
+	_ = "STUB: not implemented"
+	return ""
+
+	// HashFunc returns the hashing func for this CipherSuite.
 }
 
-// HashFunc returns the hashing func for this CipherSuite.
 func (c *TLSEcdheEcdsaWithChacha20Poly1305Sha256) HashFunc() func() hash.Hash {
-	return sha256.New
+	_ = "STUB: not implemented"
+
+	// AuthenticationType controls what authentication method is using during the handshake.
+	return nil
 }
 
-// AuthenticationType controls what authentication method is using during the handshake.
 func (c *TLSEcdheEcdsaWithChacha20Poly1305Sha256) AuthenticationType() AuthenticationType {
-	return AuthenticationTypeCertificate
+	_ = "STUB: not implemented"
+	return *new(AuthenticationType)
 }
 
 // IsInitialized returns if the CipherSuite has keying material and can
 // encrypt/decrypt packets.
 func (c *TLSEcdheEcdsaWithChacha20Poly1305Sha256) IsInitialized() bool {
-	return c.chacha.Load() != nil
+	_ = "STUB: not implemented"
+	return false
 }
 
 func (c *TLSEcdheEcdsaWithChacha20Poly1305Sha256) init(
@@ -108,38 +117,18 @@ func (c *TLSEcdheEcdsaWithChacha20Poly1305Sha256) Init(
 	serverRandom []byte,
 	isClient bool,
 ) error {
-	prfMacLen := 0
-	prfKeyLen := 32
-	prfIvLen := 12
-
-	return c.init(
-		masterSecret,
-		clientRandom,
-		serverRandom,
-		isClient,
-		prfMacLen,
-		prfKeyLen,
-		prfIvLen,
-		c.HashFunc(),
-	)
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // Encrypt encrypts a single TLS RecordLayer.
 func (c *TLSEcdheEcdsaWithChacha20Poly1305Sha256) Encrypt(pkt *recordlayer.RecordLayer, raw []byte) ([]byte, error) {
-	cipherSuite, ok := c.chacha.Load().(*ciphersuite.ChaCha20Poly1305)
-	if !ok {
-		return nil, fmt.Errorf("%w, unable to encrypt", errCipherSuiteNotInit)
-	}
-
-	return cipherSuite.Encrypt(pkt, raw)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 // Decrypt decrypts a single TLS RecordLayer.
 func (c *TLSEcdheEcdsaWithChacha20Poly1305Sha256) Decrypt(h recordlayer.Header, raw []byte) ([]byte, error) {
-	cipherSuite, ok := c.chacha.Load().(*ciphersuite.ChaCha20Poly1305)
-	if !ok {
-		return nil, fmt.Errorf("%w, unable to decrypt", errCipherSuiteNotInit)
-	}
-
-	return cipherSuite.Decrypt(h, raw)
+	_ = "STUB: not implemented"
+	return nil, nil
 }

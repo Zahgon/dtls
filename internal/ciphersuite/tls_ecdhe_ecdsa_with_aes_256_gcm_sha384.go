@@ -4,7 +4,6 @@
 package ciphersuite
 
 import (
-	"crypto/sha512"
 	"hash"
 )
 
@@ -14,26 +13,19 @@ type TLSEcdheEcdsaWithAes256GcmSha384 struct {
 }
 
 // ID returns the ID of the CipherSuite.
-func (c *TLSEcdheEcdsaWithAes256GcmSha384) ID() ID {
-	return TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384
-}
+func (c *TLSEcdheEcdsaWithAes256GcmSha384) ID() ID { _ = "STUB: not implemented"; return *new(ID) }
 
-func (c *TLSEcdheEcdsaWithAes256GcmSha384) String() string {
-	return "TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384"
-}
+func (c *TLSEcdheEcdsaWithAes256GcmSha384) String() string { _ = "STUB: not implemented"; return "" }
 
 // HashFunc returns the hashing func for this CipherSuite.
 func (c *TLSEcdheEcdsaWithAes256GcmSha384) HashFunc() func() hash.Hash {
-	return sha512.New384
+	_ = "STUB: not implemented"
+	return nil
+
+	// Init initializes the internal Cipher with keying material.
 }
 
-// Init initializes the internal Cipher with keying material.
 func (c *TLSEcdheEcdsaWithAes256GcmSha384) Init(masterSecret, clientRandom, serverRandom []byte, isClient bool) error {
-	const (
-		prfMacLen = 0
-		prfKeyLen = 32
-		prfIvLen  = 4
-	)
-
-	return c.init(masterSecret, clientRandom, serverRandom, isClient, prfMacLen, prfKeyLen, prfIvLen, c.HashFunc())
+	_ = "STUB: not implemented"
+	return nil
 }

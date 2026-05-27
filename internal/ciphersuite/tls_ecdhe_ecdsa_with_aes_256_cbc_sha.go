@@ -4,15 +4,12 @@
 package ciphersuite
 
 import (
-	"crypto/sha1" //nolint: gosec,gci
-	"crypto/sha256"
-	"fmt"
+	//nolint: gosec,gci
+
 	"hash"
 	"sync/atomic"
 
-	"github.com/pion/dtls/v3/pkg/crypto/ciphersuite"
 	"github.com/pion/dtls/v3/pkg/crypto/clientcertificate"
-	"github.com/pion/dtls/v3/pkg/crypto/prf"
 	"github.com/pion/dtls/v3/pkg/protocol/recordlayer"
 )
 
@@ -23,94 +20,63 @@ type TLSEcdheEcdsaWithAes256CbcSha struct {
 
 // CertificateType returns what type of certficate this CipherSuite exchanges.
 func (c *TLSEcdheEcdsaWithAes256CbcSha) CertificateType() clientcertificate.Type {
-	return clientcertificate.ECDSASign
+	_ = "STUB: not implemented"
+	return *new(clientcertificate.Type)
 }
 
 // KeyExchangeAlgorithm controls what key exchange algorithm is using during the handshake.
 func (c *TLSEcdheEcdsaWithAes256CbcSha) KeyExchangeAlgorithm() KeyExchangeAlgorithm {
-	return KeyExchangeAlgorithmEcdhe
+	_ = "STUB: not implemented"
+	return *new(KeyExchangeAlgorithm)
 }
 
 // ECC uses Elliptic Curve Cryptography.
 func (c *TLSEcdheEcdsaWithAes256CbcSha) ECC() bool {
-	return true
+	_ = "STUB: not implemented"
+
+	// ID returns the ID of the CipherSuite.
+	return false
 }
 
-// ID returns the ID of the CipherSuite.
-func (c *TLSEcdheEcdsaWithAes256CbcSha) ID() ID {
-	return TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA
-}
+func (c *TLSEcdheEcdsaWithAes256CbcSha) ID() ID { _ = "STUB: not implemented"; return *new(ID) }
 
-func (c *TLSEcdheEcdsaWithAes256CbcSha) String() string {
-	return "TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA"
-}
+func (c *TLSEcdheEcdsaWithAes256CbcSha) String() string { _ = "STUB: not implemented"; return "" }
 
 // HashFunc returns the hashing func for this CipherSuite.
 func (c *TLSEcdheEcdsaWithAes256CbcSha) HashFunc() func() hash.Hash {
-	return sha256.New
+	_ = "STUB: not implemented"
+
+	// AuthenticationType controls what authentication method is using during the handshake.
+	return nil
 }
 
-// AuthenticationType controls what authentication method is using during the handshake.
 func (c *TLSEcdheEcdsaWithAes256CbcSha) AuthenticationType() AuthenticationType {
-	return AuthenticationTypeCertificate
+	_ = "STUB: not implemented"
+	return *new(AuthenticationType)
 }
 
 // IsInitialized returns if the CipherSuite has keying material and can
 // encrypt/decrypt packets.
 func (c *TLSEcdheEcdsaWithAes256CbcSha) IsInitialized() bool {
-	return c.cbc.Load() != nil
+	_ = "STUB: not implemented"
+	return false
+
+	// Init initializes the internal Cipher with keying material.
 }
 
-// Init initializes the internal Cipher with keying material.
 func (c *TLSEcdheEcdsaWithAes256CbcSha) Init(masterSecret, clientRandom, serverRandom []byte, isClient bool) error {
-	const (
-		prfMacLen = 20
-		prfKeyLen = 32
-		prfIvLen  = 16
-	)
-
-	keys, err := prf.GenerateEncryptionKeys(
-		masterSecret, clientRandom, serverRandom, prfMacLen, prfKeyLen, prfIvLen, c.HashFunc(),
-	)
-	if err != nil {
-		return err
-	}
-
-	var cbc *ciphersuite.CBC
-	if isClient {
-		cbc, err = ciphersuite.NewCBC(
-			keys.ClientWriteKey, keys.ClientWriteIV, keys.ClientMACKey,
-			keys.ServerWriteKey, keys.ServerWriteIV, keys.ServerMACKey,
-			sha1.New,
-		)
-	} else {
-		cbc, err = ciphersuite.NewCBC(
-			keys.ServerWriteKey, keys.ServerWriteIV, keys.ServerMACKey,
-			keys.ClientWriteKey, keys.ClientWriteIV, keys.ClientMACKey,
-			sha1.New,
-		)
-	}
-	c.cbc.Store(cbc)
-
-	return err
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // Encrypt encrypts a single TLS RecordLayer.
 func (c *TLSEcdheEcdsaWithAes256CbcSha) Encrypt(pkt *recordlayer.RecordLayer, raw []byte) ([]byte, error) {
-	cipherSuite, ok := c.cbc.Load().(*ciphersuite.CBC)
-	if !ok {
-		return nil, fmt.Errorf("%w, unable to encrypt", errCipherSuiteNotInit)
-	}
-
-	return cipherSuite.Encrypt(pkt, raw)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 // Decrypt decrypts a single TLS RecordLayer.
 func (c *TLSEcdheEcdsaWithAes256CbcSha) Decrypt(h recordlayer.Header, raw []byte) ([]byte, error) {
-	cipherSuite, ok := c.cbc.Load().(*ciphersuite.CBC)
-	if !ok {
-		return nil, fmt.Errorf("%w, unable to decrypt", errCipherSuiteNotInit)
-	}
-
-	return cipherSuite.Decrypt(h, raw)
+	_ = "STUB: not implemented"
+	return nil, nil
 }

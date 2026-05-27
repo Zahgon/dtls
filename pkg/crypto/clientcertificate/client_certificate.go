@@ -17,9 +17,4 @@ const (
 )
 
 // Types returns all valid ClientCertificate Types.
-func Types() map[Type]bool {
-	return map[Type]bool{
-		RSASign:   true,
-		ECDSASign: true,
-	}
-}
+func Types() map[Type]bool { _ = "STUB: not implemented"; return nil }

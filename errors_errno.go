@@ -11,11 +11,7 @@
 package dtls
 
 import (
-	"errors"
 	"os"
-	"syscall"
 )
 
-func isOpErrorTemporary(err *os.SyscallError) bool {
-	return errors.Is(err.Err, syscall.ECONNREFUSED)
-}
+func isOpErrorTemporary(err *os.SyscallError) bool { _ = "STUB: not implemented"; return false }

@@ -4,9 +4,6 @@
 package handshake
 
 import (
-	"encoding/binary"
-
-	"github.com/pion/dtls/v3/internal/util"
 	"github.com/pion/dtls/v3/pkg/protocol/extension"
 	"golang.org/x/crypto/cryptobyte"
 )
@@ -41,9 +38,7 @@ type MessageCertificate13 struct {
 }
 
 // Type returns the handshake message type.
-func (m MessageCertificate13) Type() Type {
-	return TypeCertificate
-}
+func (m MessageCertificate13) Type() Type { _ = "STUB: not implemented"; return *new(Type) }
 
 const (
 	maxUint24                    = 0xffffff
@@ -66,134 +61,58 @@ const (
 //	  [2 bytes]  extensions length (from extension.Marshal)
 //	  [variable] extensions data
 func (m *MessageCertificate13) Marshal() ([]byte, error) {
+	_ = "STUB: not implemented"
 	// Validate certificate_request_context length
-	if len(m.CertificateRequestContext) > cert13ContextMaxLength {
-		return nil, errCertificateRequestContextTooLong
-	}
-
-	// Start with certificate_request_context (1-byte length prefix)
-	//nolint:gosec // G115: certificate_request_context length is validated to be <= 255 above.
-	out := []byte{byte(len(m.CertificateRequestContext))}
-	out = append(out, m.CertificateRequestContext...)
-
-	// Build certificate_list
-	certificateList := []byte{}
-	for _, entry := range m.CertificateList {
-		// Add cert_data as a 3-byte length prefix
-		certDataLen := len(entry.CertificateData)
-		if certDataLen == 0 || certDataLen > maxUint24 {
-			return nil, errInvalidCertificateEntry
-		}
-		certDataLenBytes := make([]byte, cert13CertLengthFieldSize)
-		util.PutBigEndianUint24(certDataLenBytes, uint32(certDataLen)) //nolint:gosec // G115
-		certificateList = append(certificateList, certDataLenBytes...)
-		certificateList = append(certificateList, entry.CertificateData...)
-
-		// Marshal extensions (includes a 2-byte length prefix)
-		extensionsData, err := extension.Marshal(entry.Extensions)
-		if err != nil {
-			return nil, err
-		}
-		certificateList = append(certificateList, extensionsData...)
-
-		// Check size of certificate_list is still within bounds
-		if len(certificateList) > maxUint24 {
-			return nil, errCertificateListTooLong
-		}
-	}
-
-	// Add certificate_list with 3-byte length prefix
-	certificateListLenBytes := make([]byte, cert13CertLengthFieldSize)
-	util.PutBigEndianUint24(certificateListLenBytes, uint32(len(certificateList))) //nolint:gosec // G115
-	out = append(out, certificateListLenBytes...)
-	out = append(out, certificateList...)
-
-	return out, nil
+	return nil, nil
 }
+
+// Start with certificate_request_context (1-byte length prefix)
+//nolint:gosec // G115: certificate_request_context length is validated to be <= 255 above.
+
+// Build certificate_list
+
+// Add cert_data as a 3-byte length prefix
+
+//nolint:gosec // G115
+
+// Marshal extensions (includes a 2-byte length prefix)
+
+// Check size of certificate_list is still within bounds
+
+// Add certificate_list with 3-byte length prefix
+
+//nolint:gosec // G115
 
 // parseCertificate13Entry parses a single certificate entry from the cryptobyte string.
 func parseCertificate13Entry(str *cryptobyte.String) (*CertificateEntry13, error) {
+	_ = "STUB: not implemented"
 	// Read cert_data with 3-byte length prefix
-	var certData cryptobyte.String
-	if !str.ReadUint24LengthPrefixed(&certData) {
-		return nil, errInvalidCertificateEntry
-	}
-
-	// Validate cert_data length is in valid range <1..2^24-1>
-	if len(certData) == 0 {
-		return nil, errInvalidCertificateEntry
-	}
-
-	// Copy cert_data to avoid aliasing issues
-	certDataBytes := make([]byte, len(certData))
-	copy(certDataBytes, certData)
-
-	// Validate extensions length (2-byte length prefix + up to 2^16-1 bytes of data)
-	if len(*str) < cert13ExtLengthFieldSize {
-		return nil, errInvalidCertificateEntry
-	}
-
-	// Read extensions length to validate we have enough data
-	extensionsLen := binary.BigEndian.Uint16([]byte(*str)[:cert13ExtLengthFieldSize])
-	if len(*str) < cert13ExtLengthFieldSize+int(extensionsLen) {
-		return nil, errInvalidCertificateEntry
-	}
-
-	// Unmarshal extensions data
-	extensionsData := []byte(*str)[:cert13ExtLengthFieldSize+int(extensionsLen)]
-	extensions, err := extension.Unmarshal(extensionsData)
-	if err != nil {
-		return nil, err
-	}
-
-	// Advance the cryptobyte.String's position
-	if !str.Skip(cert13ExtLengthFieldSize + int(extensionsLen)) {
-		return nil, errInvalidCertificateEntry
-	}
-
-	return &CertificateEntry13{
-		CertificateData: certDataBytes,
-		Extensions:      extensions,
-	}, nil
+	return nil, nil
 }
+
+// Validate cert_data length is in valid range <1..2^24-1>
+
+// Copy cert_data to avoid aliasing issues
+
+// Validate extensions length (2-byte length prefix + up to 2^16-1 bytes of data)
+
+// Read extensions length to validate we have enough data
+
+// Unmarshal extensions data
+
+// Advance the cryptobyte.String's position
 
 // Unmarshal decodes the MessageCertificate13 from its wire format.
 func (m *MessageCertificate13) Unmarshal(data []byte) error {
+	_ = "STUB: not implemented"
 	// Validate minimum data length
-	if len(data) < cert13ContextLengthFieldSize+cert13CertLengthFieldSize {
-		return errBufferTooSmall
-	}
-
-	str := cryptobyte.String(data)
-
-	// Read certificate_request_context with 1-byte length prefix
-	var contextData cryptobyte.String
-	if !str.ReadUint8LengthPrefixed(&contextData) {
-		return errInvalidCertificateRequestContext
-	}
-	m.CertificateRequestContext = make([]byte, len(contextData))
-	copy(m.CertificateRequestContext, contextData)
-
-	// Read certificate_list with 3-byte length prefix
-	var certificateListData cryptobyte.String
-	if !str.ReadUint24LengthPrefixed(&certificateListData) {
-		return errInvalidCertificateEntry
-	}
-
-	// Ensure no trailing data
-	if len(str) != 0 {
-		return errLengthMismatch
-	}
-
-	// Parse certificate_list
-	m.CertificateList = []CertificateEntry13{}
-	for len(certificateListData) > 0 {
-		entry, err := parseCertificate13Entry(&certificateListData)
-		if err != nil {
-			return err
-		}
-		m.CertificateList = append(m.CertificateList, *entry)
-	}
-
 	return nil
 }
+
+// Read certificate_request_context with 1-byte length prefix
+
+// Read certificate_list with 3-byte length prefix
+
+// Ensure no trailing data
+
+// Parse certificate_list

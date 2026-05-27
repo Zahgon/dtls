@@ -3,10 +3,6 @@
 
 package extension
 
-import (
-	"golang.org/x/crypto/cryptobyte"
-)
-
 // PskKeyExchangeModes implements the PskKeyExchangeModes extension in DTLS 1.3.
 // See RFC 8446 section 4.2.9. Pre-Shared Key Exchange Modes.
 //
@@ -25,57 +21,15 @@ const (
 
 // TypeValue returns the extension TypeValue.
 func (p PskKeyExchangeModes) TypeValue() TypeValue {
-	return PskKeyExchangeModesTypeValue
+	_ = "STUB: not implemented"
+	return *new(TypeValue)
 }
 
 // Marshal encodes the extension.
-func (p *PskKeyExchangeModes) Marshal() ([]byte, error) {
-	if len(p.KeModes) == 0 {
-		return nil, errNoPskKeyExchangeMode
-	}
-
-	var out cryptobyte.Builder
-	out.AddUint16(uint16(p.TypeValue()))
-
-	out.AddUint16LengthPrefixed(func(b *cryptobyte.Builder) {
-		b.AddUint8LengthPrefixed(func(b *cryptobyte.Builder) {
-			for _, keM := range p.KeModes {
-				b.AddUint8(uint8(keM))
-			}
-		})
-	})
-
-	return out.Bytes()
-}
+func (p *PskKeyExchangeModes) Marshal() ([]byte, error) { _ = "STUB: not implemented"; return nil, nil }
 
 // Unmarshal populates the extension from encoded data.
-func (p *PskKeyExchangeModes) Unmarshal(data []byte) error { //nolint:cyclop
-	val := cryptobyte.String(data)
-	var extension uint16
-	if !val.ReadUint16(&extension) || TypeValue(extension) != p.TypeValue() {
-		return errInvalidExtensionType
-	}
-
-	var extData cryptobyte.String
-	if !val.ReadUint16LengthPrefixed(&extData) {
-		return errBufferTooSmall
-	}
-
-	var strModes cryptobyte.String
-
-	if !extData.ReadUint8LengthPrefixed(&strModes) || strModes.Empty() {
-		return errPskKeyExchangeModesFormat
-	}
-
-	if !extData.Empty() {
-		return errLengthMismatch
-	}
-
-	p.KeModes = make([]PskKeyExchangeMode, 0)
-
-	for _, mode := range strModes {
-		p.KeModes = append(p.KeModes, PskKeyExchangeMode(mode))
-	}
-
+func (p *PskKeyExchangeModes) Unmarshal(data []byte) error {
+	_ = "STUB: not implemented" //nolint:cyclop
 	return nil
 }

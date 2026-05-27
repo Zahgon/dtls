@@ -14,25 +14,24 @@ type TLSPskWithChacha20Poly1305Sha256 struct {
 
 // CertificateType returns what type of certificate this CipherSuite exchanges.
 func (c *TLSPskWithChacha20Poly1305Sha256) CertificateType() clientcertificate.Type {
-	return clientcertificate.Type(0)
+	_ = "STUB: not implemented"
+	return *new(clientcertificate.Type)
 }
 
 // KeyExchangeAlgorithm controls what key exchange algorithm is using during the handshake.
 func (c *TLSPskWithChacha20Poly1305Sha256) KeyExchangeAlgorithm() KeyExchangeAlgorithm {
-	return KeyExchangeAlgorithmPsk
+	_ = "STUB: not implemented"
+	return *new(KeyExchangeAlgorithm)
 }
 
 // ID returns the ID of the CipherSuite.
-func (c *TLSPskWithChacha20Poly1305Sha256) ID() ID {
-	return TLS_PSK_WITH_CHACHA20_POLY1305_SHA256
-}
+func (c *TLSPskWithChacha20Poly1305Sha256) ID() ID { _ = "STUB: not implemented"; return *new(ID) }
 
 // String returns the string representation of the cipher's ID.
-func (c *TLSPskWithChacha20Poly1305Sha256) String() string {
-	return c.ID().String()
-}
+func (c *TLSPskWithChacha20Poly1305Sha256) String() string { _ = "STUB: not implemented"; return "" }
 
 // AuthenticationType controls what authentication method is using during the handshake.
 func (c *TLSPskWithChacha20Poly1305Sha256) AuthenticationType() AuthenticationType {
-	return AuthenticationTypePreSharedKey
+	_ = "STUB: not implemented"
+	return *new(AuthenticationType)
 }

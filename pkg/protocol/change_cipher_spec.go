@@ -12,19 +12,17 @@ type ChangeCipherSpec struct{}
 
 // ContentType returns the ContentType of this content.
 func (c ChangeCipherSpec) ContentType() ContentType {
-	return ContentTypeChangeCipherSpec
+	_ = "STUB: not implemented"
+	return *new(ContentType)
 }
 
 // Marshal encodes the ChangeCipherSpec to binary.
 func (c *ChangeCipherSpec) Marshal() ([]byte, error) {
-	return []byte{0x01}, nil
+	_ = "STUB: not implemented"
+	return nil,
+
+		// Unmarshal populates the ChangeCipherSpec from binary.
+		nil
 }
 
-// Unmarshal populates the ChangeCipherSpec from binary.
-func (c *ChangeCipherSpec) Unmarshal(data []byte) error {
-	if len(data) == 1 && data[0] == 0x01 {
-		return nil
-	}
-
-	return errInvalidCipherSpec
-}
+func (c *ChangeCipherSpec) Unmarshal(data []byte) error { _ = "STUB: not implemented"; return nil }

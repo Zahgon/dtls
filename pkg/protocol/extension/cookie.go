@@ -3,10 +3,6 @@
 
 package extension
 
-import (
-	"golang.org/x/crypto/cryptobyte"
-)
-
 const maxCookieSize = 0xffff - 2
 
 // CookieExt implements the cookie extension in DTLS 1.3.
@@ -17,49 +13,17 @@ type CookieExt struct {
 
 // TypeValue returns the extension TypeValue.
 func (c CookieExt) TypeValue() TypeValue {
-	return CookieTypeValue
+	_ = "STUB: not implemented"
+	return *
+
+	// Marshal encodes the extension.
+	new(TypeValue)
 }
 
-// Marshal encodes the extension.
-func (c *CookieExt) Marshal() ([]byte, error) {
-	cookieLength := len(c.Cookie)
-	if cookieLength == 0 || cookieLength > maxCookieSize {
-		return nil, errCookieExtFormat
-	}
-	var b cryptobyte.Builder
-	b.AddUint16(uint16(c.TypeValue()))
-	b.AddUint16LengthPrefixed(func(b *cryptobyte.Builder) {
-		b.AddUint16LengthPrefixed(func(b *cryptobyte.Builder) {
-			b.AddBytes(c.Cookie)
-		})
-	})
-
-	return b.Bytes()
-}
+func (c *CookieExt) Marshal() ([]byte, error) { _ = "STUB: not implemented"; return nil, nil }
 
 // Unmarshal populates the extension from encoded data.
-func (c *CookieExt) Unmarshal(data []byte) error { //nolint:cyclop
-	val := cryptobyte.String(data)
-	var extension uint16
-	if !val.ReadUint16(&extension) || TypeValue(extension) != c.TypeValue() {
-		return errInvalidExtensionType
-	}
-
-	var extData cryptobyte.String
-	if !val.ReadUint16LengthPrefixed(&extData) {
-		return errBufferTooSmall
-	}
-
-	var cookie cryptobyte.String
-	if !extData.ReadUint16LengthPrefixed(&cookie) || cookie.Empty() || len(cookie) > maxCookieSize {
-		return errCookieExtFormat
-	}
-
-	if !extData.Empty() {
-		return errLengthMismatch
-	}
-
-	c.Cookie = append([]byte(nil), cookie...)
-
+func (c *CookieExt) Unmarshal(data []byte) error {
+	_ = "STUB: not implemented" //nolint:cyclop
 	return nil
 }

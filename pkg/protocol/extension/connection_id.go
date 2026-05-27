@@ -3,10 +3,6 @@
 
 package extension
 
-import (
-	"golang.org/x/crypto/cryptobyte"
-)
-
 // ConnectionID is a DTLS extension that provides an alternative to IP address
 // and port for session association.
 //
@@ -19,50 +15,10 @@ type ConnectionID struct {
 }
 
 // TypeValue returns the extension TypeValue.
-func (c ConnectionID) TypeValue() TypeValue {
-	return ConnectionIDTypeValue
-}
+func (c ConnectionID) TypeValue() TypeValue { _ = "STUB: not implemented"; return *new(TypeValue) }
 
 // Marshal encodes the extension.
-func (c *ConnectionID) Marshal() ([]byte, error) {
-	var b cryptobyte.Builder
-	b.AddUint16(uint16(c.TypeValue()))
-	b.AddUint16LengthPrefixed(func(b *cryptobyte.Builder) {
-		b.AddUint8LengthPrefixed(func(b *cryptobyte.Builder) {
-			b.AddBytes(c.CID)
-		})
-	})
-
-	return b.Bytes()
-}
+func (c *ConnectionID) Marshal() ([]byte, error) { _ = "STUB: not implemented"; return nil, nil }
 
 // Unmarshal populates the extension from encoded data.
-func (c *ConnectionID) Unmarshal(data []byte) error {
-	val := cryptobyte.String(data)
-	var extension uint16
-	val.ReadUint16(&extension)
-	if TypeValue(extension) != c.TypeValue() {
-		return errInvalidExtensionType
-	}
-
-	var extData cryptobyte.String
-	if !val.ReadUint16LengthPrefixed(&extData) {
-		return errBufferTooSmall
-	}
-
-	var cid cryptobyte.String
-	if !extData.ReadUint8LengthPrefixed(&cid) {
-		return errInvalidCIDFormat
-	}
-
-	if !extData.Empty() {
-		return errLengthMismatch
-	}
-
-	c.CID = make([]byte, len(cid))
-	if !cid.CopyBytes(c.CID) {
-		return errInvalidCIDFormat
-	}
-
-	return nil
-}
+func (c *ConnectionID) Unmarshal(data []byte) error { _ = "STUB: not implemented"; return nil }

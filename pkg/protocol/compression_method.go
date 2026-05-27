@@ -17,38 +17,19 @@ type CompressionMethod struct {
 
 // CompressionMethods returns all supported CompressionMethods.
 func CompressionMethods() map[CompressionMethodID]*CompressionMethod {
-	return map[CompressionMethodID]*CompressionMethod{
-		compressionMethodNull: {ID: compressionMethodNull},
-	}
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // DecodeCompressionMethods the given compression methods.
 func DecodeCompressionMethods(buf []byte) ([]*CompressionMethod, error) {
-	if len(buf) < 1 {
-		return nil, errBufferTooSmall
-	}
-	compressionMethodsCount := int(buf[0])
-	c := []*CompressionMethod{}
-	for i := range compressionMethodsCount {
-		if len(buf) <= i+1 {
-			return nil, errBufferTooSmall
-		}
-		id := CompressionMethodID(buf[i+1])
-		if compressionMethod, ok := CompressionMethods()[id]; ok {
-			c = append(c, compressionMethod)
-		}
-	}
-
-	return c, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 // EncodeCompressionMethods the given compression methods.
 func EncodeCompressionMethods(c []*CompressionMethod) []byte {
+	_ = "STUB: not implemented"
 	//nolint:gosec // G115: TLS encodes compression_methods vector length as a single byte.
-	out := []byte{byte(len(c))}
-	for i := len(c); i > 0; i-- {
-		out = append(out, byte(c[i-1].ID))
-	}
-
-	return out
+	return nil
 }

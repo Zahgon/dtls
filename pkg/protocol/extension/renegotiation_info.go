@@ -3,8 +3,6 @@
 
 package extension
 
-import "encoding/binary"
-
 const (
 	renegotiationInfoHeaderSize = 5
 )
@@ -18,33 +16,12 @@ type RenegotiationInfo struct {
 }
 
 // TypeValue returns the extension TypeValue.
-func (r RenegotiationInfo) TypeValue() TypeValue {
-	return RenegotiationInfoTypeValue
-}
+func (r RenegotiationInfo) TypeValue() TypeValue { _ = "STUB: not implemented"; return *new(TypeValue) }
 
 // Marshal encodes the extension.
-func (r *RenegotiationInfo) Marshal() ([]byte, error) {
-	out := make([]byte, renegotiationInfoHeaderSize)
+func (r *RenegotiationInfo) Marshal() ([]byte, error) { _ = "STUB: not implemented"; return nil, nil }
 
-	binary.BigEndian.PutUint16(out, uint16(r.TypeValue()))
-	binary.BigEndian.PutUint16(out[2:], uint16(1)) // length
-	out[4] = r.RenegotiatedConnection
-
-	return out, nil
-}
+// length
 
 // Unmarshal populates the extension from encoded data.
-func (r *RenegotiationInfo) Unmarshal(data []byte) error {
-	switch {
-	case len(data) < renegotiationInfoHeaderSize:
-		return errBufferTooSmall
-	case TypeValue(binary.BigEndian.Uint16(data)) != r.TypeValue():
-		return errInvalidExtensionType
-	case binary.BigEndian.Uint16(data[2:4]) != 1:
-		return errLengthMismatch
-	}
-
-	r.RenegotiatedConnection = data[4]
-
-	return nil
-}
+func (r *RenegotiationInfo) Unmarshal(data []byte) error { _ = "STUB: not implemented"; return nil }

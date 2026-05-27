@@ -24,6 +24,4 @@ type Content interface {
 	Unmarshal(data []byte) error
 }
 
-func IsDTLS13Ciphertext(ct ContentType) bool {
-	return ct > 31 && ct < 64
-}
+func IsDTLS13Ciphertext(ct ContentType) bool { _ = "STUB: not implemented"; return false }

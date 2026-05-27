@@ -12,24 +12,23 @@ type TLSPskWithAes128GcmSha256 struct {
 
 // CertificateType returns what type of certificate this CipherSuite exchanges.
 func (c *TLSPskWithAes128GcmSha256) CertificateType() clientcertificate.Type {
-	return clientcertificate.Type(0)
+	_ = "STUB: not implemented"
+	return *new(clientcertificate.Type)
 }
 
 // KeyExchangeAlgorithm controls what key exchange algorithm is using during the handshake.
 func (c *TLSPskWithAes128GcmSha256) KeyExchangeAlgorithm() KeyExchangeAlgorithm {
-	return KeyExchangeAlgorithmPsk
+	_ = "STUB: not implemented"
+	return *new(KeyExchangeAlgorithm)
 }
 
 // ID returns the ID of the CipherSuite.
-func (c *TLSPskWithAes128GcmSha256) ID() ID {
-	return TLS_PSK_WITH_AES_128_GCM_SHA256
-}
+func (c *TLSPskWithAes128GcmSha256) ID() ID { _ = "STUB: not implemented"; return *new(ID) }
 
-func (c *TLSPskWithAes128GcmSha256) String() string {
-	return "TLS_PSK_WITH_AES_128_GCM_SHA256"
-}
+func (c *TLSPskWithAes128GcmSha256) String() string { _ = "STUB: not implemented"; return "" }
 
 // AuthenticationType controls what authentication method is using during the handshake.
 func (c *TLSPskWithAes128GcmSha256) AuthenticationType() AuthenticationType {
-	return AuthenticationTypePreSharedKey
+	_ = "STUB: not implemented"
+	return *new(AuthenticationType)
 }

@@ -3,8 +3,6 @@
 
 package extension // nolint:dupl
 
-import "encoding/binary"
-
 const (
 	useExtendedMasterSecretHeaderSize = 4
 )
@@ -18,35 +16,20 @@ type UseExtendedMasterSecret struct {
 
 // TypeValue returns the extension TypeValue.
 func (u UseExtendedMasterSecret) TypeValue() TypeValue {
-	return UseExtendedMasterSecretTypeValue
+	_ = "STUB: not implemented"
+	return *new(TypeValue)
 }
 
 // Marshal encodes the extension.
 func (u *UseExtendedMasterSecret) Marshal() ([]byte, error) {
-	if !u.Supported {
-		return []byte{}, nil
-	}
-
-	out := make([]byte, useExtendedMasterSecretHeaderSize)
-
-	binary.BigEndian.PutUint16(out, uint16(u.TypeValue()))
-	binary.BigEndian.PutUint16(out[2:], uint16(0)) // length
-
-	return out, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
+
+// length
 
 // Unmarshal populates the extension from encoded data.
 func (u *UseExtendedMasterSecret) Unmarshal(data []byte) error {
-	switch {
-	case len(data) < useExtendedMasterSecretHeaderSize:
-		return errBufferTooSmall
-	case data[2] != 0x00 || data[3] != 0x00:
-		return errLengthMismatch
-	case TypeValue(binary.BigEndian.Uint16(data)) != u.TypeValue():
-		return errInvalidExtensionType
-	}
-
-	u.Supported = true
-
+	_ = "STUB: not implemented"
 	return nil
 }

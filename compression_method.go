@@ -6,7 +6,6 @@ package dtls
 import "github.com/pion/dtls/v3/pkg/protocol"
 
 func defaultCompressionMethods() []*protocol.CompressionMethod {
-	return []*protocol.CompressionMethod{
-		{},
-	}
+	_ = "STUB: not implemented"
+	return nil
 }

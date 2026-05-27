@@ -4,14 +4,11 @@
 package ciphersuite
 
 import (
-	"crypto/sha256"
-	"fmt"
 	"hash"
 	"sync/atomic"
 
 	"github.com/pion/dtls/v3/pkg/crypto/ciphersuite"
 	"github.com/pion/dtls/v3/pkg/crypto/clientcertificate"
-	"github.com/pion/dtls/v3/pkg/crypto/prf"
 	"github.com/pion/dtls/v3/pkg/protocol/recordlayer"
 )
 
@@ -28,93 +25,59 @@ type AesCcm struct {
 
 // CertificateType returns what type of certificate this CipherSuite exchanges.
 func (c *AesCcm) CertificateType() clientcertificate.Type {
-	return c.clientCertificateType
+	_ = "STUB: not implemented"
+	return *new(clientcertificate.Type)
 }
 
 // ID returns the ID of the CipherSuite.
-func (c *AesCcm) ID() ID {
-	return c.id
-}
+func (c *AesCcm) ID() ID { _ = "STUB: not implemented"; return *new(ID) }
 
-func (c *AesCcm) String() string {
-	return c.id.String()
-}
+func (c *AesCcm) String() string { _ = "STUB: not implemented"; return "" }
 
 // ECC uses Elliptic Curve Cryptography.
 func (c *AesCcm) ECC() bool {
-	return c.ecc
+	_ = "STUB: not implemented"
+
+	// KeyExchangeAlgorithm controls what key exchange algorithm is using during the handshake.
+	return false
 }
 
-// KeyExchangeAlgorithm controls what key exchange algorithm is using during the handshake.
 func (c *AesCcm) KeyExchangeAlgorithm() KeyExchangeAlgorithm {
-	return c.keyExchangeAlgorithm
+	_ = "STUB: not implemented"
+	return *new(KeyExchangeAlgorithm)
 }
 
 // HashFunc returns the hashing func for this CipherSuite.
 func (c *AesCcm) HashFunc() func() hash.Hash {
-	return sha256.New
+	_ = "STUB: not implemented"
+
+	// AuthenticationType controls what authentication method is using during the handshake.
+	return nil
 }
 
-// AuthenticationType controls what authentication method is using during the handshake.
 func (c *AesCcm) AuthenticationType() AuthenticationType {
-	if c.psk {
-		return AuthenticationTypePreSharedKey
-	}
-
-	return AuthenticationTypeCertificate
+	_ = "STUB: not implemented"
+	return *new(AuthenticationType)
 }
 
 // IsInitialized returns if the CipherSuite has keying material and can
 // encrypt/decrypt packets.
-func (c *AesCcm) IsInitialized() bool {
-	return c.ccm.Load() != nil
-}
+func (c *AesCcm) IsInitialized() bool { _ = "STUB: not implemented"; return false }
 
 // Init initializes the internal Cipher with keying material.
 func (c *AesCcm) Init(masterSecret, clientRandom, serverRandom []byte, isClient bool, prfKeyLen int) error {
-	const (
-		prfMacLen = 0
-		prfIvLen  = 4
-	)
-
-	keys, err := prf.GenerateEncryptionKeys(
-		masterSecret, clientRandom, serverRandom, prfMacLen, prfKeyLen, prfIvLen, c.HashFunc(),
-	)
-	if err != nil {
-		return err
-	}
-
-	var ccm *ciphersuite.CCM
-	if isClient {
-		ccm, err = ciphersuite.NewCCM(
-			c.cryptoCCMTagLen, keys.ClientWriteKey, keys.ClientWriteIV, keys.ServerWriteKey, keys.ServerWriteIV,
-		)
-	} else {
-		ccm, err = ciphersuite.NewCCM(
-			c.cryptoCCMTagLen, keys.ServerWriteKey, keys.ServerWriteIV, keys.ClientWriteKey, keys.ClientWriteIV,
-		)
-	}
-	c.ccm.Store(ccm)
-
-	return err
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // Encrypt encrypts a single TLS RecordLayer.
 func (c *AesCcm) Encrypt(pkt *recordlayer.RecordLayer, raw []byte) ([]byte, error) {
-	cipherSuite, ok := c.ccm.Load().(*ciphersuite.CCM)
-	if !ok {
-		return nil, fmt.Errorf("%w, unable to encrypt", errCipherSuiteNotInit)
-	}
-
-	return cipherSuite.Encrypt(pkt, raw)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 // Decrypt decrypts a single TLS RecordLayer.
 func (c *AesCcm) Decrypt(h recordlayer.Header, raw []byte) ([]byte, error) {
-	cipherSuite, ok := c.ccm.Load().(*ciphersuite.CCM)
-	if !ok {
-		return nil, fmt.Errorf("%w, unable to decrypt", errCipherSuiteNotInit)
-	}
-
-	return cipherSuite.Decrypt(h, raw)
+	_ = "STUB: not implemented"
+	return nil, nil
 }

@@ -14,17 +14,12 @@ type ApplicationData struct {
 
 // ContentType returns the ContentType of this content.
 func (a ApplicationData) ContentType() ContentType {
-	return ContentTypeApplicationData
+	_ = "STUB: not implemented"
+	return *new(ContentType)
 }
 
 // Marshal encodes the ApplicationData to binary.
-func (a *ApplicationData) Marshal() ([]byte, error) {
-	return append([]byte{}, a.Data...), nil
-}
+func (a *ApplicationData) Marshal() ([]byte, error) { _ = "STUB: not implemented"; return nil, nil }
 
 // Unmarshal populates the ApplicationData from binary.
-func (a *ApplicationData) Unmarshal(data []byte) error {
-	a.Data = append([]byte{}, data...)
-
-	return nil
-}
+func (a *ApplicationData) Unmarshal(data []byte) error { _ = "STUB: not implemented"; return nil }

@@ -4,8 +4,6 @@
 package handshake
 
 import (
-	"crypto/rand"
-	"encoding/binary"
 	"time"
 )
 
@@ -24,29 +22,13 @@ type Random struct {
 }
 
 // MarshalFixed encodes the Handshake.
-func (r *Random) MarshalFixed() [RandomLength]byte {
-	var out [RandomLength]byte
+func (r *Random) MarshalFixed() [RandomLength]byte { _ = "STUB: not implemented"; return nil }
 
-	binary.BigEndian.PutUint32(out[0:], uint32(r.GMTUnixTime.Unix())) //nolint:gosec // G115
-	copy(out[4:], r.RandomBytes[:])
-
-	return out
-}
+//nolint:gosec // G115
 
 // UnmarshalFixed populates the message from encoded data.
-func (r *Random) UnmarshalFixed(data [RandomLength]byte) {
-	r.GMTUnixTime = time.Unix(int64(binary.BigEndian.Uint32(data[0:])), 0)
-	copy(r.RandomBytes[:], data[4:])
-}
+func (r *Random) UnmarshalFixed(data [RandomLength]byte) { _ = "STUB: not implemented"; return }
 
 // Populate fills the handshakeRandom with random values
 // may be called multiple times.
-func (r *Random) Populate() error {
-	r.GMTUnixTime = time.Now()
-
-	tmp := make([]byte, RandomBytesLength)
-	_, err := rand.Read(tmp)
-	copy(r.RandomBytes[:], tmp)
-
-	return err
-}
+func (r *Random) Populate() error { _ = "STUB: not implemented"; return nil }

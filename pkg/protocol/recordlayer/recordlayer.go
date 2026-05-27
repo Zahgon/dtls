@@ -4,11 +4,7 @@
 package recordlayer
 
 import (
-	"encoding/binary"
-
 	"github.com/pion/dtls/v3/pkg/protocol"
-	"github.com/pion/dtls/v3/pkg/protocol/alert"
-	"github.com/pion/dtls/v3/pkg/protocol/handshake"
 )
 
 // DTLS fixed size record layer header when Connection IDs are not in-use.
@@ -49,44 +45,12 @@ type RecordLayer struct {
 }
 
 // Marshal encodes the RecordLayer to binary.
-func (r *RecordLayer) Marshal() ([]byte, error) {
-	contentRaw, err := r.Content.Marshal()
-	if err != nil {
-		return nil, err
-	}
+func (r *RecordLayer) Marshal() ([]byte, error) { _ = "STUB: not implemented"; return nil, nil }
 
-	r.Header.ContentLen = uint16(len(contentRaw)) //nolint:gosec // G115
-	r.Header.ContentType = r.Content.ContentType()
-
-	headerRaw, err := r.Header.Marshal()
-	if err != nil {
-		return nil, err
-	}
-
-	return append(headerRaw, contentRaw...), nil
-}
+//nolint:gosec // G115
 
 // Unmarshal populates the RecordLayer from binary.
-func (r *RecordLayer) Unmarshal(data []byte) error {
-	if err := r.Header.Unmarshal(data); err != nil {
-		return err
-	}
-
-	switch r.Header.ContentType {
-	case protocol.ContentTypeChangeCipherSpec:
-		r.Content = &protocol.ChangeCipherSpec{}
-	case protocol.ContentTypeAlert:
-		r.Content = &alert.Alert{}
-	case protocol.ContentTypeHandshake:
-		r.Content = &handshake.Handshake{}
-	case protocol.ContentTypeApplicationData:
-		r.Content = &protocol.ApplicationData{}
-	default:
-		return errInvalidContentType
-	}
-
-	return r.Content.Unmarshal(data[r.Header.Size()+len(r.Header.ConnectionID):])
-}
+func (r *RecordLayer) Unmarshal(data []byte) error { _ = "STUB: not implemented"; return nil }
 
 // UnpackDatagram extracts all RecordLayer messages from a single datagram.
 // Note that as with TLS, multiple handshake messages may be placed in
@@ -95,51 +59,12 @@ func (r *RecordLayer) Unmarshal(data []byte) error {
 // two DTLS messages into the same datagram: in the same record or in
 // separate records.
 // https://tools.ietf.org/html/rfc6347#section-4.2.3
-func UnpackDatagram(buf []byte) ([][]byte, error) {
-	out := [][]byte{}
-
-	for offset := 0; len(buf) != offset; {
-		if len(buf)-offset <= FixedHeaderSize {
-			return nil, ErrInvalidPacketLength
-		}
-
-		pktLen := (FixedHeaderSize + int(binary.BigEndian.Uint16(buf[offset+11:])))
-		if offset+pktLen > len(buf) {
-			return nil, ErrInvalidPacketLength
-		}
-
-		out = append(out, buf[offset:offset+pktLen])
-		offset += pktLen
-	}
-
-	return out, nil
-}
+func UnpackDatagram(buf []byte) ([][]byte, error) { _ = "STUB: not implemented"; return nil, nil }
 
 // ContentAwareUnpackDatagram is the same as UnpackDatagram but considers the
 // presence of a connection identifier if the record is of content type
 // tls12_cid.
 func ContentAwareUnpackDatagram(buf []byte, cidLength int) ([][]byte, error) {
-	out := [][]byte{}
-
-	for offset := 0; len(buf) != offset; {
-		headerSize := FixedHeaderSize
-		lenIdx := fixedHeaderLenIdx
-		if protocol.ContentType(buf[offset]) == protocol.ContentTypeConnectionID {
-			headerSize += cidLength
-			lenIdx += cidLength
-		}
-		if len(buf)-offset <= headerSize {
-			return nil, ErrInvalidPacketLength
-		}
-
-		pktLen := (headerSize + int(binary.BigEndian.Uint16(buf[offset+lenIdx:])))
-		if offset+pktLen > len(buf) {
-			return nil, ErrInvalidPacketLength
-		}
-
-		out = append(out, buf[offset:offset+pktLen])
-		offset += pktLen
-	}
-
-	return out, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }

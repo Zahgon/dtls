@@ -15,36 +15,20 @@ type Closer struct {
 }
 
 // NewCloser creates a new instance of Closer.
-func NewCloser() *Closer {
-	ctx, closeFunc := context.WithCancel(context.Background())
-
-	return &Closer{
-		ctx:       ctx,
-		closeFunc: closeFunc,
-	}
-}
+func NewCloser() *Closer { _ = "STUB: not implemented"; return nil }
 
 // NewCloserWithParent creates a new instance of Closer with a parent context.
-func NewCloserWithParent(ctx context.Context) *Closer {
-	ctx, closeFunc := context.WithCancel(ctx)
-
-	return &Closer{
-		ctx:       ctx,
-		closeFunc: closeFunc,
-	}
-}
+func NewCloserWithParent(ctx context.Context) *Closer { _ = "STUB: not implemented"; return nil }
 
 // Done returns a channel signaling when it is done.
-func (c *Closer) Done() <-chan struct{} {
-	return c.ctx.Done()
-}
+func (c *Closer) Done() <-chan struct{} { _ = "STUB: not implemented"; return nil }
 
 // Err returns an error of the context.
 func (c *Closer) Err() error {
-	return c.ctx.Err()
+	_ = "STUB: not implemented"
+
+	// Close sends a signal to trigger the ctx done channel.
+	return nil
 }
 
-// Close sends a signal to trigger the ctx done channel.
-func (c *Closer) Close() {
-	c.closeFunc()
-}
+func (c *Closer) Close() { _ = "STUB: not implemented"; return }

@@ -6,7 +6,6 @@ package alert
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/pion/dtls/v3/pkg/protocol"
 )
@@ -22,16 +21,7 @@ const (
 	Fatal   Level = 2
 )
 
-func (l Level) String() string {
-	switch l {
-	case Warning:
-		return "Warning"
-	case Fatal:
-		return "Fatal"
-	default:
-		return "Invalid alert level"
-	}
-}
+func (l Level) String() string { _ = "STUB: not implemented"; return "" }
 
 // Description is the extended info of the TLS Alert.
 type Description byte
@@ -66,63 +56,9 @@ const (
 	NoApplicationProtocol  Description = 120
 )
 
-func (d Description) String() string { //nolint:cyclop
-	switch d {
-	case CloseNotify:
-		return "CloseNotify"
-	case UnexpectedMessage:
-		return "UnexpectedMessage"
-	case BadRecordMac:
-		return "BadRecordMac"
-	case DecryptionFailed:
-		return "DecryptionFailed"
-	case RecordOverflow:
-		return "RecordOverflow"
-	case DecompressionFailure:
-		return "DecompressionFailure"
-	case HandshakeFailure:
-		return "HandshakeFailure"
-	case NoCertificate:
-		return "NoCertificate"
-	case BadCertificate:
-		return "BadCertificate"
-	case UnsupportedCertificate:
-		return "UnsupportedCertificate"
-	case CertificateRevoked:
-		return "CertificateRevoked"
-	case CertificateExpired:
-		return "CertificateExpired"
-	case CertificateUnknown:
-		return "CertificateUnknown"
-	case IllegalParameter:
-		return "IllegalParameter"
-	case UnknownCA:
-		return "UnknownCA"
-	case AccessDenied:
-		return "AccessDenied"
-	case DecodeError:
-		return "DecodeError"
-	case DecryptError:
-		return "DecryptError"
-	case ExportRestriction:
-		return "ExportRestriction"
-	case ProtocolVersion:
-		return "ProtocolVersion"
-	case InsufficientSecurity:
-		return "InsufficientSecurity"
-	case InternalError:
-		return "InternalError"
-	case UserCanceled:
-		return "UserCanceled"
-	case NoRenegotiation:
-		return "NoRenegotiation"
-	case UnsupportedExtension:
-		return "UnsupportedExtension"
-	case NoApplicationProtocol:
-		return "NoApplicationProtocol"
-	default:
-		return "Invalid alert description"
-	}
+func (d Description) String() string {
+	_ = "STUB: not implemented" //nolint:cyclop
+	return ""
 }
 
 // Alert is one of the content types supported by the TLS record layer.
@@ -142,26 +78,14 @@ type Alert struct {
 
 // ContentType returns the ContentType of this Content.
 func (a Alert) ContentType() protocol.ContentType {
-	return protocol.ContentTypeAlert
+	_ = "STUB: not implemented"
+	return *new(protocol.ContentType)
 }
 
 // Marshal returns the encoded alert.
-func (a *Alert) Marshal() ([]byte, error) {
-	return []byte{byte(a.Level), byte(a.Description)}, nil
-}
+func (a *Alert) Marshal() ([]byte, error) { _ = "STUB: not implemented"; return nil, nil }
 
 // Unmarshal populates the alert from binary data.
-func (a *Alert) Unmarshal(data []byte) error {
-	if len(data) != 2 {
-		return errBufferTooSmall
-	}
+func (a *Alert) Unmarshal(data []byte) error { _ = "STUB: not implemented"; return nil }
 
-	a.Level = Level(data[0])
-	a.Description = Description(data[1])
-
-	return nil
-}
-
-func (a *Alert) String() string {
-	return fmt.Sprintf("Alert %s: %s", a.Level, a.Description)
-}
+func (a *Alert) String() string { _ = "STUB: not implemented"; return "" }

@@ -5,13 +5,8 @@
 package prf
 
 import (
-	"crypto/ecdh"
-	"crypto/hmac"
-	"encoding/binary"
 	"errors"
-	"fmt"
 	"hash"
-	"math"
 
 	"github.com/pion/dtls/v3/pkg/crypto/elliptic"
 	"github.com/pion/dtls/v3/pkg/protocol"
@@ -41,24 +36,7 @@ type EncryptionKeys struct {
 
 var errInvalidNamedCurve = &protocol.FatalError{Err: errors.New("invalid named curve")} //nolint:err113
 
-func (e *EncryptionKeys) String() string {
-	return fmt.Sprintf(`encryptionKeys:
-- masterSecret: %#v
-- clientMACKey: %#v
-- serverMACKey: %#v
-- clientWriteKey: %#v
-- serverWriteKey: %#v
-- clientWriteIV: %#v
-- serverWriteIV: %#v
-`,
-		e.MasterSecret,
-		e.ClientMACKey,
-		e.ServerMACKey,
-		e.ClientWriteKey,
-		e.ServerWriteKey,
-		e.ClientWriteIV,
-		e.ServerWriteIV)
-}
+func (e *EncryptionKeys) String() string { _ = "STUB: not implemented"; return "" }
 
 // PSKPreMasterSecret generates the PSK Premaster Secret
 // The premaster secret is formed as follows: if the PSK is N octets
@@ -66,72 +44,36 @@ func (e *EncryptionKeys) String() string {
 // uint16 with the value N, and the PSK itself.
 //
 // https://tools.ietf.org/html/rfc4279#section-2
-func PSKPreMasterSecret(psk []byte) []byte {
-	pskLen := uint16(len(psk)) //nolint:gosec // G115
+func PSKPreMasterSecret(psk []byte) []byte { _ = "STUB: not implemented"; return nil }
 
-	out := append(make([]byte, 2+pskLen+2), psk...)
-	binary.BigEndian.PutUint16(out, pskLen)
-	binary.BigEndian.PutUint16(out[2+pskLen:], pskLen)
-
-	return out
-}
+//nolint:gosec // G115
 
 // EcdhePSKPreMasterSecret implements TLS 1.2 Premaster Secret generation given a psk, a keypair and a curve
 //
 // https://datatracker.ietf.org/doc/html/rfc5489#section-2
 func EcdhePSKPreMasterSecret(psk, publicKey, privateKey []byte, curve elliptic.Curve) ([]byte, error) {
-	preMasterSecret, err := PreMasterSecret(publicKey, privateKey, curve)
-	if err != nil {
-		return nil, err
-	}
-	out := make([]byte, 2+len(preMasterSecret)+2+len(psk))
-
-	// write preMasterSecret length
-	offset := 0
-	binary.BigEndian.PutUint16(out[offset:], uint16(len(preMasterSecret))) //nolint:gosec // G115
-	offset += 2
-
-	// write preMasterSecret
-	copy(out[offset:], preMasterSecret)
-	offset += len(preMasterSecret)
-
-	// write psk length
-	binary.BigEndian.PutUint16(out[offset:], uint16(len(psk))) //nolint:gosec // G115
-	offset += 2
-
-	// write psk
-	copy(out[offset:], psk)
-
-	return out, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
+
+// write preMasterSecret length
+
+//nolint:gosec // G115
+
+// write preMasterSecret
+
+// write psk length
+//nolint:gosec // G115
+
+// write psk
 
 // PreMasterSecret implements TLS 1.2 Premaster Secret generation given a keypair and a curve.
 func PreMasterSecret(publicKey, privateKey []byte, curve elliptic.Curve) ([]byte, error) {
-	var ec ecdh.Curve
-
-	switch curve {
-	case elliptic.X25519:
-		ec = ecdh.X25519()
-	case elliptic.P256:
-		ec = ecdh.P256()
-	case elliptic.P384:
-		ec = ecdh.P384()
-	default:
-		return nil, errInvalidNamedCurve
-	}
-
-	sk, err := ec.NewPrivateKey(privateKey)
-	if err != nil {
-		return nil, err
-	}
-
-	pk, err := ec.NewPublicKey(publicKey) // NIST: SEC1 uncompressed; X25519: 32-byte u
-	if err != nil {
-		return nil, err
-	}
-
-	return sk.ECDH(pk)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
+
+// NIST: SEC1 uncompressed; X25519: 32-byte u
 
 // PHash is PRF is the SHA-256 hash function is used for all cipher suites
 // defined in this TLS 1.2 document and in TLS documents published prior to this
@@ -157,48 +99,21 @@ func PreMasterSecret(publicKey, privateKey []byte, curve elliptic.Curve) ([]byte
 //
 // https://tools.ietf.org/html/rfc4346w
 func PHash(secret, seed []byte, requestedLength int, hashFunc HashFunc) ([]byte, error) {
-	hmacSHA256 := func(key, data []byte) ([]byte, error) {
-		mac := hmac.New(hashFunc, key)
-		if _, err := mac.Write(data); err != nil {
-			return nil, err
-		}
-
-		return mac.Sum(nil), nil
-	}
-
-	var err error
-	lastRound := seed
-	out := []byte{}
-
-	iterations := int(math.Ceil(float64(requestedLength) / float64(hashFunc().Size())))
-	for range iterations {
-		lastRound, err = hmacSHA256(secret, lastRound)
-		if err != nil {
-			return nil, err
-		}
-		withSecret, err := hmacSHA256(secret, append(lastRound, seed...))
-		if err != nil {
-			return nil, err
-		}
-		out = append(out, withSecret...)
-	}
-
-	return out[:requestedLength], nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 // ExtendedMasterSecret generates a Extended MasterSecret as defined in
 // https://tools.ietf.org/html/rfc7627
 func ExtendedMasterSecret(preMasterSecret, sessionHash []byte, h HashFunc) ([]byte, error) {
-	seed := append([]byte(extendedMasterSecretLabel), sessionHash...)
-
-	return PHash(preMasterSecret, seed, 48, h)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 // MasterSecret generates a TLS 1.2 MasterSecret.
 func MasterSecret(preMasterSecret, clientRandom, serverRandom []byte, h HashFunc) ([]byte, error) {
-	seed := append(append([]byte(masterSecretLabel), clientRandom...), serverRandom...)
-
-	return PHash(preMasterSecret, seed, 48, h)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 // GenerateEncryptionKeys is the final step TLS 1.2 PRF. Given all state generated so far generates
@@ -208,57 +123,23 @@ func GenerateEncryptionKeys(
 	macLen, keyLen, ivLen int,
 	h HashFunc,
 ) (*EncryptionKeys, error) {
-	seed := append(append([]byte(keyExpansionLabel), serverRandom...), clientRandom...)
-	keyMaterial, err := PHash(masterSecret, seed, (2*macLen)+(2*keyLen)+(2*ivLen), h)
-	if err != nil {
-		return nil, err
-	}
-
-	clientMACKey := keyMaterial[:macLen]
-	keyMaterial = keyMaterial[macLen:]
-
-	serverMACKey := keyMaterial[:macLen]
-	keyMaterial = keyMaterial[macLen:]
-
-	clientWriteKey := keyMaterial[:keyLen]
-	keyMaterial = keyMaterial[keyLen:]
-
-	serverWriteKey := keyMaterial[:keyLen]
-	keyMaterial = keyMaterial[keyLen:]
-
-	clientWriteIV := keyMaterial[:ivLen]
-	keyMaterial = keyMaterial[ivLen:]
-
-	serverWriteIV := keyMaterial[:ivLen]
-
-	return &EncryptionKeys{
-		MasterSecret:   masterSecret,
-		ClientMACKey:   clientMACKey,
-		ServerMACKey:   serverMACKey,
-		ClientWriteKey: clientWriteKey,
-		ServerWriteKey: serverWriteKey,
-		ClientWriteIV:  clientWriteIV,
-		ServerWriteIV:  serverWriteIV,
-	}, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func prfVerifyData(masterSecret, handshakeBodies []byte, label string, hashFunc HashFunc) ([]byte, error) {
-	h := hashFunc()
-	if _, err := h.Write(handshakeBodies); err != nil {
-		return nil, err
-	}
-
-	seed := append([]byte(label), h.Sum(nil)...)
-
-	return PHash(masterSecret, seed, 12, hashFunc)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 // VerifyDataClient is caled on the Client Side to either verify or generate the VerifyData message.
 func VerifyDataClient(masterSecret, handshakeBodies []byte, h HashFunc) ([]byte, error) {
-	return prfVerifyData(masterSecret, handshakeBodies, verifyDataClientLabel, h)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 // VerifyDataServer is caled on the Server Side to either verify or generate the VerifyData message.
 func VerifyDataServer(masterSecret, handshakeBodies []byte, h HashFunc) ([]byte, error) {
-	return prfVerifyData(masterSecret, handshakeBodies, verifyDataServerLabel, h)
+	_ = "STUB: not implemented"
+	return nil, nil
 }

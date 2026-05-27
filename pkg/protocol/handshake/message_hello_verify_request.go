@@ -28,39 +28,18 @@ type MessageHelloVerifyRequest struct {
 }
 
 // Type returns the Handshake Type.
-func (m MessageHelloVerifyRequest) Type() Type {
-	return TypeHelloVerifyRequest
-}
+func (m MessageHelloVerifyRequest) Type() Type { _ = "STUB: not implemented"; return *new(Type) }
 
 // Marshal encodes the Handshake.
 func (m *MessageHelloVerifyRequest) Marshal() ([]byte, error) {
-	if len(m.Cookie) > 255 {
-		return nil, errCookieTooLong
-	}
-
-	out := make([]byte, 3+len(m.Cookie))
-	out[0] = m.Version.Major
-	out[1] = m.Version.Minor
-	out[2] = byte(len(m.Cookie)) //nolint:gosec // G115: cookie length is validated to be <= 255 above.
-	copy(out[3:], m.Cookie)
-
-	return out, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
+
+//nolint:gosec // G115: cookie length is validated to be <= 255 above.
 
 // Unmarshal populates the message from encoded data.
 func (m *MessageHelloVerifyRequest) Unmarshal(data []byte) error {
-	if len(data) < 3 {
-		return errBufferTooSmall
-	}
-	m.Version.Major = data[0]
-	m.Version.Minor = data[1]
-	cookieLength := int(data[2])
-	if len(data) < cookieLength+3 {
-		return errBufferTooSmall
-	}
-	m.Cookie = make([]byte, cookieLength)
-
-	copy(m.Cookie, data[3:3+cookieLength])
-
+	_ = "STUB: not implemented"
 	return nil
 }

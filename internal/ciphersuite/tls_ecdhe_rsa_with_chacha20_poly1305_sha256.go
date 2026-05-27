@@ -14,15 +14,15 @@ type TLSEcdheRsaWithChacha20Poly1305Sha256 struct {
 
 // CertificateType returns what type of certificate this CipherSuite exchanges.
 func (c *TLSEcdheRsaWithChacha20Poly1305Sha256) CertificateType() clientcertificate.Type {
-	return clientcertificate.RSASign
+	_ = "STUB: not implemented"
+	return *new(clientcertificate.Type)
 }
 
 // ID returns the ID of the CipherSuite.
-func (c *TLSEcdheRsaWithChacha20Poly1305Sha256) ID() ID {
-	return TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256
-}
+func (c *TLSEcdheRsaWithChacha20Poly1305Sha256) ID() ID { _ = "STUB: not implemented"; return *new(ID) }
 
 // String returns the string representation of the cipher's ID.
 func (c *TLSEcdheRsaWithChacha20Poly1305Sha256) String() string {
-	return c.ID().String()
+	_ = "STUB: not implemented"
+	return ""
 }

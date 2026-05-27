@@ -3,8 +3,6 @@
 
 package extension //nolint:dupl
 
-import "encoding/binary"
-
 const (
 	postHandshakeAuthHeaderSize = 4
 )
@@ -18,36 +16,10 @@ type PostHandshakeAuth struct {
 }
 
 // TypeValue returns the extension TypeValue.
-func (p PostHandshakeAuth) TypeValue() TypeValue {
-	return PostHandshakeAuthTypeValue
-}
+func (p PostHandshakeAuth) TypeValue() TypeValue { _ = "STUB: not implemented"; return *new(TypeValue) }
 
 // Marshal encodes the extension.
-func (p *PostHandshakeAuth) Marshal() ([]byte, error) {
-	if !p.Enabled {
-		return []byte{}, nil
-	}
-
-	out := make([]byte, postHandshakeAuthHeaderSize)
-
-	binary.BigEndian.PutUint16(out, uint16(p.TypeValue()))
-	binary.BigEndian.PutUint16(out[2:], uint16(0))
-
-	return out, nil
-}
+func (p *PostHandshakeAuth) Marshal() ([]byte, error) { _ = "STUB: not implemented"; return nil, nil }
 
 // Unmarshal populates the extension from encoded data.
-func (p *PostHandshakeAuth) Unmarshal(data []byte) error {
-	switch {
-	case len(data) < postHandshakeAuthHeaderSize:
-		return errBufferTooSmall
-	case data[2] != 0x00 || data[3] != 0x00:
-		return errLengthMismatch
-	case TypeValue(binary.BigEndian.Uint16(data)) != p.TypeValue():
-		return errInvalidExtensionType
-	}
-
-	p.Enabled = true
-
-	return nil
-}
+func (p *PostHandshakeAuth) Unmarshal(data []byte) error { _ = "STUB: not implemented"; return nil }

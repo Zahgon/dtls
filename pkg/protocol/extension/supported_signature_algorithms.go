@@ -17,21 +17,22 @@ type SupportedSignatureAlgorithms struct {
 
 // TypeValue returns the extension TypeValue.
 func (s SupportedSignatureAlgorithms) TypeValue() TypeValue {
-	return SupportedSignatureAlgorithmsTypeValue
+	_ = "STUB: not implemented"
+	return *new(TypeValue)
 }
 
 // Marshal encodes the extension.
 // This supports hybrid encoding: TLS 1.3 PSS schemes are encoded as full uint16,
 // while TLS 1.2 schemes use hash (high byte) + signature (low byte) encoding.
 func (s *SupportedSignatureAlgorithms) Marshal() ([]byte, error) {
-	return marshalGenericSignatureHashAlgorithm(s.TypeValue(), s.SignatureHashAlgorithms)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 // Unmarshal populates the extension from encoded data.
 // This supports hybrid encoding: detects TLS 1.3 PSS schemes
 // and handles them as full uint16, while TLS 1.2 schemes use byte-split encoding.
 func (s *SupportedSignatureAlgorithms) Unmarshal(data []byte) error {
-	s.SignatureHashAlgorithms = []signaturehash.Algorithm{}
-
-	return unmarshalGenericSignatureHashAlgorithm(s.TypeValue(), data, &s.SignatureHashAlgorithms)
+	_ = "STUB: not implemented"
+	return nil
 }

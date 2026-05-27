@@ -12,14 +12,11 @@ type TLSEcdheRsaWithAes256CbcSha struct {
 
 // CertificateType returns what type of certificate this CipherSuite exchanges.
 func (c *TLSEcdheRsaWithAes256CbcSha) CertificateType() clientcertificate.Type {
-	return clientcertificate.RSASign
+	_ = "STUB: not implemented"
+	return *new(clientcertificate.Type)
 }
 
 // ID returns the ID of the CipherSuite.
-func (c *TLSEcdheRsaWithAes256CbcSha) ID() ID {
-	return TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA
-}
+func (c *TLSEcdheRsaWithAes256CbcSha) ID() ID { _ = "STUB: not implemented"; return *new(ID) }
 
-func (c *TLSEcdheRsaWithAes256CbcSha) String() string {
-	return "TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA"
-}
+func (c *TLSEcdheRsaWithAes256CbcSha) String() string { _ = "STUB: not implemented"; return "" }

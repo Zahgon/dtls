@@ -4,8 +4,6 @@
 package handshake
 
 import (
-	"encoding/binary"
-
 	"github.com/pion/dtls/v3/internal/ciphersuite/types"
 )
 
@@ -25,60 +23,20 @@ type MessageClientKeyExchange struct {
 }
 
 // Type returns the Handshake Type.
-func (m MessageClientKeyExchange) Type() Type {
-	return TypeClientKeyExchange
-}
+func (m MessageClientKeyExchange) Type() Type { _ = "STUB: not implemented"; return *new(Type) }
 
 // Marshal encodes the Handshake.
 func (m *MessageClientKeyExchange) Marshal() (out []byte, err error) {
-	if m.IdentityHint == nil && m.PublicKey == nil {
-		return nil, errInvalidClientKeyExchange
-	}
-
-	if m.IdentityHint != nil {
-		out = append([]byte{0x00, 0x00}, m.IdentityHint...)
-		binary.BigEndian.PutUint16(out, uint16(len(out)-2)) //nolint:gosec // G115
-	}
-
-	if m.PublicKey != nil {
-		if len(m.PublicKey) > 255 {
-			return nil, errPublicKeyTooLong
-		}
-		out = append(out, byte(len(m.PublicKey))) //nolint:gosec // G115: public key length is validated to be <= 255 above.
-		out = append(out, m.PublicKey...)
-	}
-
-	return out, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
+
+//nolint:gosec // G115
+
+//nolint:gosec // G115: public key length is validated to be <= 255 above.
 
 // Unmarshal populates the message from encoded data.
 func (m *MessageClientKeyExchange) Unmarshal(data []byte) error {
-	switch {
-	case len(data) < 2:
-		return errBufferTooSmall
-	case m.KeyExchangeAlgorithm == types.KeyExchangeAlgorithmNone:
-		return errCipherSuiteUnset
-	}
-
-	offset := 0
-	if m.KeyExchangeAlgorithm.Has(types.KeyExchangeAlgorithmPsk) {
-		pskLength := int(binary.BigEndian.Uint16(data))
-		if pskLength > len(data)-2 {
-			return errBufferTooSmall
-		}
-
-		m.IdentityHint = append([]byte{}, data[2:pskLength+2]...)
-		offset += pskLength + 2
-	}
-
-	if m.KeyExchangeAlgorithm.Has(types.KeyExchangeAlgorithmEcdhe) {
-		publicKeyLength := int(data[offset])
-		if publicKeyLength > len(data)-1-offset {
-			return errBufferTooSmall
-		}
-
-		m.PublicKey = append([]byte{}, data[offset+1:]...)
-	}
-
+	_ = "STUB: not implemented"
 	return nil
 }

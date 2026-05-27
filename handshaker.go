@@ -7,7 +7,6 @@ import (
 	"context"
 	"crypto/tls"
 	"crypto/x509"
-	"fmt"
 	"io"
 	"sync"
 	"time"
@@ -65,22 +64,7 @@ const (
 	handshakeFinished
 )
 
-func (s handshakeState) String() string {
-	switch s {
-	case handshakeErrored:
-		return "Errored"
-	case handshakePreparing:
-		return "Preparing"
-	case handshakeSending:
-		return "Sending"
-	case handshakeWaiting:
-		return "Waiting"
-	case handshakeFinished:
-		return "Finished"
-	default:
-		return "Unknown"
-	}
-}
+func (s handshakeState) String() string { _ = "STUB: not implemented"; return "" }
 
 type handshakeFSM struct {
 	currentFlight      flightVal
@@ -152,215 +136,55 @@ type flightConn interface {
 }
 
 func (c *handshakeConfig) writeKeyLog(label string, clientRandom, secret []byte) {
-	if c.keyLogWriter == nil {
-		return
-	}
-	c.mu.Lock()
-	defer c.mu.Unlock()
-	_, err := fmt.Fprintf(c.keyLogWriter, "%s %x %x\n", label, clientRandom, secret)
-	if err != nil {
-		c.log.Debugf("failed to write key log file: %s", err)
-	}
+	_ = "STUB: not implemented"
+	return
 }
 
-func srvCliStr(isClient bool) string {
-	if isClient {
-		return "client"
-	}
-
-	return "server"
-}
+func srvCliStr(isClient bool) string { _ = "STUB: not implemented"; return "" }
 
 func newHandshakeFSM(
 	s *State, cache *handshakeCache, cfg *handshakeConfig,
 	initialFlight flightVal,
 ) *handshakeFSM {
-	return &handshakeFSM{
-		currentFlight:      initialFlight,
-		state:              s,
-		cache:              cache,
-		cfg:                cfg,
-		retransmitInterval: cfg.initialRetransmitInterval,
-		closed:             make(chan struct{}),
-	}
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func (s *handshakeFSM) Run(ctx context.Context, conn flightConn, initialState handshakeState) error {
-	state := initialState
-	defer func() {
-		close(s.closed)
-	}()
-	for {
-		s.cfg.log.Tracef("[handshake:%s] %s: %s", srvCliStr(s.state.isClient), s.currentFlight.String(), state.String())
-		if s.cfg.onFlightState != nil {
-			s.cfg.onFlightState(s.currentFlight, state)
-		}
-		var err error
-		switch state {
-		case handshakePreparing:
-			state, err = s.prepare(ctx, conn)
-		case handshakeSending:
-			state, err = s.send(ctx, conn)
-		case handshakeWaiting:
-			state, err = s.wait(ctx, conn)
-		case handshakeFinished:
-			state, err = s.finish(ctx, conn)
-		default:
-			return errInvalidFSMTransition
-		}
-		if err != nil {
-			return err
-		}
-	}
+	_ = "STUB: not implemented"
+	return nil
 }
 
-func (s *handshakeFSM) Done() <-chan struct{} {
-	return s.closed
-}
+func (s *handshakeFSM) Done() <-chan struct{} { _ = "STUB: not implemented"; return nil }
 
 func (s *handshakeFSM) prepare(ctx context.Context, conn flightConn) (handshakeState, error) {
-	s.flights = nil
+	_ = "STUB: not implemented"
+
 	// Prepare flights
-	var (
-		dtlsAlert *alert.Alert
-		err       error
-		pkts      []*packet
-	)
-	gen, retransmit, errFlight := s.currentFlight.getFlightGenerator()
-	if errFlight != nil {
-		err = errFlight
-		dtlsAlert = &alert.Alert{Level: alert.Fatal, Description: alert.InternalError}
-	} else {
-		pkts, dtlsAlert, err = gen(conn, s.state, s.cache, s.cfg)
-		s.retransmit = retransmit
-	}
-	if dtlsAlert != nil {
-		if alertErr := conn.notify(ctx, dtlsAlert.Level, dtlsAlert.Description); alertErr != nil {
-			if err != nil {
-				err = alertErr
-			}
-		}
-	}
-	if err != nil {
-		return handshakeErrored, err
-	}
-
-	s.flights = pkts
-	epoch := s.cfg.initialEpoch
-	nextEpoch := epoch
-	for _, p := range s.flights {
-		p.record.Header.Epoch += epoch
-		if p.record.Header.Epoch > nextEpoch {
-			nextEpoch = p.record.Header.Epoch
-		}
-		if h, ok := p.record.Content.(*handshake.Handshake); ok {
-			h.Header.MessageSequence = uint16(s.state.handshakeSendSequence) //nolint:gosec // G115
-			s.state.handshakeSendSequence++
-		}
-	}
-	if epoch != nextEpoch {
-		s.cfg.log.Tracef("[handshake:%s] -> changeCipherSpec (epoch: %d)", srvCliStr(s.state.isClient), nextEpoch)
-		conn.setLocalEpoch(nextEpoch)
-	}
-
-	return handshakeSending, nil
+	return *new(handshakeState), nil
 }
+
+//nolint:gosec // G115
 
 func (s *handshakeFSM) send(ctx context.Context, c flightConn) (handshakeState, error) {
+	_ = "STUB: not implemented"
 	// Send flights
-	if err := c.writePackets(ctx, s.flights); err != nil {
-		return handshakeErrored, err
-	}
-
-	if s.currentFlight.isLastSendFlight() {
-		return handshakeFinished, nil
-	}
-
-	return handshakeWaiting, nil
+	return *new(handshakeState), nil
 }
 
-func (s *handshakeFSM) wait(ctx context.Context, conn flightConn) (handshakeState, error) { //nolint:gocognit,cyclop
-	parse, errFlight := s.currentFlight.getFlightParser()
-	if errFlight != nil {
-		if alertErr := conn.notify(ctx, alert.Fatal, alert.InternalError); alertErr != nil {
-			return handshakeErrored, alertErr
-		}
-
-		return handshakeErrored, errFlight
-	}
-
-	retransmitTimer := time.NewTimer(s.retransmitInterval)
-	for {
-		select {
-		case state := <-conn.recvHandshake():
-			if !state.isRetransmit {
-				// only reset retransmit interval on non-retransmit state
-				// https://github.com/pion/dtls/issues/758
-				s.retransmitInterval = s.cfg.initialRetransmitInterval
-			}
-
-			nextFlight, alert, err := parse(ctx, conn, s.state, s.cache, s.cfg)
-			close(state.done)
-			if alert != nil {
-				if alertErr := conn.notify(ctx, alert.Level, alert.Description); alertErr != nil {
-					if err != nil {
-						err = alertErr
-					}
-				}
-			}
-			if err != nil {
-				return handshakeErrored, err
-			}
-			if nextFlight == 0 {
-				break
-			}
-			s.cfg.log.Tracef(
-				"[handshake:%s] %s -> %s",
-				srvCliStr(s.state.isClient),
-				s.currentFlight.String(),
-				nextFlight.String(),
-			)
-			if nextFlight.isLastRecvFlight() && s.currentFlight == nextFlight {
-				return handshakeFinished, nil
-			}
-			s.currentFlight = nextFlight
-
-			return handshakePreparing, nil
-
-		case <-retransmitTimer.C:
-			if !s.retransmit {
-				return handshakeWaiting, nil
-			}
-
-			// RFC 4347 4.2.4.1:
-			// Implementations SHOULD use an initial timer value of 1 second (the minimum defined in RFC 2988 [RFC2988])
-			// and double the value at each retransmission, up to no less than the RFC 2988 maximum of 60 seconds.
-			if !s.cfg.disableRetransmitBackoff {
-				s.retransmitInterval *= 2
-			}
-			if s.retransmitInterval > time.Second*60 {
-				s.retransmitInterval = time.Second * 60
-			}
-
-			return handshakeSending, nil
-		case <-ctx.Done():
-			s.retransmitInterval = s.cfg.initialRetransmitInterval
-
-			return handshakeErrored, ctx.Err()
-		}
-	}
+func (s *handshakeFSM) wait(ctx context.Context, conn flightConn) (handshakeState, error) {
+	_ = "STUB: not implemented" //nolint:gocognit,cyclop
+	return *new(handshakeState), nil
 }
+
+// only reset retransmit interval on non-retransmit state
+// https://github.com/pion/dtls/issues/758
+
+// RFC 4347 4.2.4.1:
+// Implementations SHOULD use an initial timer value of 1 second (the minimum defined in RFC 2988 [RFC2988])
+// and double the value at each retransmission, up to no less than the RFC 2988 maximum of 60 seconds.
 
 func (s *handshakeFSM) finish(ctx context.Context, c flightConn) (handshakeState, error) {
-	select {
-	case state := <-c.recvHandshake():
-		close(state.done)
-		if s.state.isClient {
-			return handshakeFinished, nil
-		} else {
-			return handshakeSending, nil
-		}
-	case <-ctx.Done():
-		return handshakeErrored, ctx.Err()
-	}
+	_ = "STUB: not implemented"
+	return *new(handshakeState), nil
 }

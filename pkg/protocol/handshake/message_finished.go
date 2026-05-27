@@ -15,17 +15,14 @@ type MessageFinished struct {
 
 // Type returns the Handshake Type.
 func (m MessageFinished) Type() Type {
-	return TypeFinished
+	_ = "STUB: not implemented"
+	return *
+
+	// Marshal encodes the Handshake.
+	new(Type)
 }
 
-// Marshal encodes the Handshake.
-func (m *MessageFinished) Marshal() ([]byte, error) {
-	return append([]byte{}, m.VerifyData...), nil
-}
+func (m *MessageFinished) Marshal() ([]byte, error) { _ = "STUB: not implemented"; return nil, nil }
 
 // Unmarshal populates the message from encoded data.
-func (m *MessageFinished) Unmarshal(data []byte) error {
-	m.VerifyData = append([]byte{}, data...)
-
-	return nil
-}
+func (m *MessageFinished) Unmarshal(data []byte) error { _ = "STUB: not implemented"; return nil }

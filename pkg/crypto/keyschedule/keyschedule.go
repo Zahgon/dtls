@@ -5,11 +5,8 @@
 package keyschedule
 
 import (
-	"crypto/hkdf"
 	"errors"
 	"hash"
-
-	"golang.org/x/crypto/cryptobyte"
 )
 
 var (
@@ -26,71 +23,33 @@ const (
 
 // HkdfExtract implements RFC 5869 section 2.2.
 func HkdfExtract(hash func() hash.Hash, salt, ikm []byte) ([]byte, error) {
-	if hash == nil {
-		return nil, errMissingHashFunction
-	}
-	// Note: Go's hkdf.Extract signature is (hash, ikm, salt),
-	// while RFC 5869 specifies HKDF-Extract(salt, IKM)
-	return hkdf.Extract(hash, ikm, salt)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
+
+// Note: Go's hkdf.Extract signature is (hash, ikm, salt),
+// while RFC 5869 specifies HKDF-Extract(salt, IKM)
 
 // HkdfExpandLabel implements RFC 8446 section 7.1 with RFC 9147 section 5.9's defined DTLS prefix.
 func HkdfExpandLabel(hash func() hash.Hash, secret []byte, label string, context []byte, length int) ([]byte, error) {
-	fullLabel := []byte(DTLS13prefix + label)
-
-	if hash == nil {
-		return nil, errMissingHashFunction
-	}
-
-	// RFC 8446 section 7.1
-	// opaque label<7..255>
-	if len(fullLabel) < 7 {
-		return nil, errLabelTooSmall
-	} else if len(fullLabel) > 255 {
-		return nil, errLabelTooBig
-	}
-
-	if len(context) > 255 {
-		return nil, errContextTooBig
-	}
-
-	var builder cryptobyte.Builder
-
-	// RFC 5869 section 2.3
-	// L        length of output keying material in octets
-	//          (<= 255*HashLen)
-	// https://datatracker.ietf.org/doc/html/rfc5869#section-2.3
-	if length > hash().Size()*255 {
-		return nil, errLengthTooBig
-	}
-	builder.AddUint16(uint16(length)) //nolint:gosec
-
-	builder.AddUint8LengthPrefixed(func(b *cryptobyte.Builder) {
-		b.AddBytes(fullLabel)
-	})
-
-	builder.AddUint8LengthPrefixed(func(b *cryptobyte.Builder) {
-		b.AddBytes(context)
-	})
-
-	hkdfLabel, err := builder.Bytes()
-	if err != nil {
-		return nil, err
-	}
-
-	return hkdf.Expand(hash, secret, string(hkdfLabel), length)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
+
+// RFC 8446 section 7.1
+// opaque label<7..255>
+
+// RFC 5869 section 2.3
+// L        length of output keying material in octets
+//          (<= 255*HashLen)
+// https://datatracker.ietf.org/doc/html/rfc5869#section-2.3
+
+//nolint:gosec
 
 // DeriveSecret implements RFC 8446 section 7.1.
 //
 // TranscriptHash is defined in RFC 8446 section 4.4.
 func DeriveSecret(hash func() hash.Hash, secret []byte, label string, transcriptHash hash.Hash) ([]byte, error) {
-	if hash == nil {
-		return nil, errMissingHashFunction
-	}
-	if transcriptHash == nil {
-		transcriptHash = hash()
-	}
-
-	return HkdfExpandLabel(hash, secret, label, transcriptHash.Sum(nil), transcriptHash.Size())
+	_ = "STUB: not implemented"
+	return nil, nil
 }

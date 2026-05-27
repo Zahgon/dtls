@@ -5,8 +5,6 @@ package protocol
 
 import (
 	"errors"
-	"fmt"
-	"net"
 )
 
 var (
@@ -43,70 +41,90 @@ type HandshakeError struct {
 }
 
 // Timeout implements net.Error.Timeout().
-func (*FatalError) Timeout() bool { return false }
+func (*FatalError) Timeout() bool {
+	_ = "STUB: not implemented"
 
-// Temporary implements net.Error.Temporary().
-func (*FatalError) Temporary() bool { return false }
-
-// Unwrap implements Go1.13 error unwrapper.
-func (e *FatalError) Unwrap() error { return e.Err }
-
-func (e *FatalError) Error() string { return fmt.Sprintf("dtls fatal: %v", e.Err) }
-
-// Timeout implements net.Error.Timeout().
-func (*InternalError) Timeout() bool { return false }
-
-// Temporary implements net.Error.Temporary().
-func (*InternalError) Temporary() bool { return false }
-
-// Unwrap implements Go1.13 error unwrapper.
-func (e *InternalError) Unwrap() error { return e.Err }
-
-func (e *InternalError) Error() string { return fmt.Sprintf("dtls internal: %v", e.Err) }
-
-// Timeout implements net.Error.Timeout().
-func (*TemporaryError) Timeout() bool { return false }
-
-// Temporary implements net.Error.Temporary().
-func (*TemporaryError) Temporary() bool { return true }
-
-// Unwrap implements Go1.13 error unwrapper.
-func (e *TemporaryError) Unwrap() error { return e.Err }
-
-func (e *TemporaryError) Error() string { return fmt.Sprintf("dtls temporary: %v", e.Err) }
-
-// Timeout implements net.Error.Timeout().
-func (*TimeoutError) Timeout() bool { return true }
-
-// Temporary implements net.Error.Temporary().
-func (*TimeoutError) Temporary() bool { return true }
-
-// Unwrap implements Go1.13 error unwrapper.
-func (e *TimeoutError) Unwrap() error { return e.Err }
-
-func (e *TimeoutError) Error() string { return fmt.Sprintf("dtls timeout: %v", e.Err) }
-
-// Timeout implements net.Error.Timeout().
-func (e *HandshakeError) Timeout() bool {
-	var netErr net.Error
-	if errors.As(e.Err, &netErr) {
-		return netErr.Timeout()
-	}
-
+	// Temporary implements net.Error.Temporary().
 	return false
 }
 
-// Temporary implements net.Error.Temporary().
-func (e *HandshakeError) Temporary() bool {
-	var netErr net.Error
-	if errors.As(e.Err, &netErr) {
-		return netErr.Temporary() //nolint
-	}
+func (*FatalError) Temporary() bool {
+	_ = "STUB: not implemented"
 
+	// Unwrap implements Go1.13 error unwrapper.
 	return false
 }
 
-// Unwrap implements Go1.13 error unwrapper.
-func (e *HandshakeError) Unwrap() error { return e.Err }
+func (e *FatalError) Unwrap() error { _ = "STUB: not implemented"; return nil }
 
-func (e *HandshakeError) Error() string { return fmt.Sprintf("handshake error: %v", e.Err) }
+func (e *FatalError) Error() string { _ = "STUB: not implemented"; return "" }
+
+// Timeout implements net.Error.Timeout().
+func (*InternalError) Timeout() bool {
+	_ = "STUB: not implemented"
+
+	// Temporary implements net.Error.Temporary().
+	return false
+}
+
+func (*InternalError) Temporary() bool {
+	_ = "STUB: not implemented"
+
+	// Unwrap implements Go1.13 error unwrapper.
+	return false
+}
+
+func (e *InternalError) Unwrap() error { _ = "STUB: not implemented"; return nil }
+
+func (e *InternalError) Error() string { _ = "STUB: not implemented"; return "" }
+
+// Timeout implements net.Error.Timeout().
+func (*TemporaryError) Timeout() bool {
+	_ = "STUB: not implemented"
+
+	// Temporary implements net.Error.Temporary().
+	return false
+}
+
+func (*TemporaryError) Temporary() bool {
+	_ = "STUB: not implemented"
+
+	// Unwrap implements Go1.13 error unwrapper.
+	return false
+}
+
+func (e *TemporaryError) Unwrap() error { _ = "STUB: not implemented"; return nil }
+
+func (e *TemporaryError) Error() string { _ = "STUB: not implemented"; return "" }
+
+// Timeout implements net.Error.Timeout().
+func (*TimeoutError) Timeout() bool {
+	_ = "STUB: not implemented"
+
+	// Temporary implements net.Error.Temporary().
+	return false
+}
+
+func (*TimeoutError) Temporary() bool {
+	_ = "STUB: not implemented"
+
+	// Unwrap implements Go1.13 error unwrapper.
+	return false
+}
+
+func (e *TimeoutError) Unwrap() error { _ = "STUB: not implemented"; return nil }
+
+func (e *TimeoutError) Error() string { _ = "STUB: not implemented"; return "" }
+
+// Timeout implements net.Error.Timeout().
+func (e *HandshakeError) Timeout() bool { _ = "STUB: not implemented"; return false }
+
+// Temporary implements net.Error.Temporary().
+func (e *HandshakeError) Temporary() bool { _ = "STUB: not implemented"; return false }
+
+//nolint
+
+// Unwrap implements Go1.13 error unwrapper.
+func (e *HandshakeError) Unwrap() error { _ = "STUB: not implemented"; return nil }
+
+func (e *HandshakeError) Error() string { _ = "STUB: not implemented"; return "" }

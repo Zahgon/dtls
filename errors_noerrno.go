@@ -13,6 +13,4 @@ import (
 	"os"
 )
 
-func isOpErrorTemporary(err *os.SyscallError) bool {
-	return false
-}
+func isOpErrorTemporary(err *os.SyscallError) bool { _ = "STUB: not implemented"; return false }

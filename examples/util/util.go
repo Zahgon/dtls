@@ -5,16 +5,9 @@
 package util //nolint: revive
 
 import (
-	"bufio"
 	"crypto/tls"
-	"encoding/pem"
 	"errors"
-	"fmt"
 	"io"
-	"net"
-	"os"
-	"path/filepath"
-	"strings"
 )
 
 const bufSize = 8192
@@ -25,74 +18,21 @@ var (
 )
 
 // Chat simulates a simple text chat session over the connection.
-func Chat(conn io.ReadWriter) {
-	go func() {
-		b := make([]byte, bufSize)
-
-		for {
-			n, err := conn.Read(b)
-			Check(err)
-			fmt.Printf("Got message: %s\n", string(b[:n]))
-		}
-	}()
-
-	reader := bufio.NewReader(os.Stdin)
-
-	for {
-		text, err := reader.ReadString('\n')
-		Check(err)
-
-		if strings.TrimSpace(text) == "exit" {
-			return
-		}
-
-		_, err = conn.Write([]byte(text))
-		Check(err)
-	}
-}
+func Chat(conn io.ReadWriter) { _ = "STUB: not implemented"; return }
 
 // Check is a helper to throw errors in the examples.
-func Check(err error) {
-	var netError net.Error
-	if errors.As(err, &netError) && netError.Temporary() { //nolint:staticcheck
-		fmt.Printf("Warning: %v\n", err)
-	} else if err != nil {
-		fmt.Printf("error: %v\n", err)
-		panic(err)
-	}
-}
+func Check(err error) { _ = "STUB: not implemented"; return }
+
+//nolint:staticcheck
 
 // LoadKeyAndCertificate reads certificates or key from file.
 func LoadKeyAndCertificate(keyPath string, certificatePath string) (tls.Certificate, error) {
-	return tls.LoadX509KeyPair(certificatePath, keyPath)
+	_ = "STUB: not implemented"
+	return *new(tls.Certificate), nil
 }
 
 // LoadCertificate Load/read certificate(s) from file.
 func LoadCertificate(path string) (*tls.Certificate, error) {
-	rawData, err := os.ReadFile(filepath.Clean(path))
-	if err != nil {
-		return nil, err
-	}
-
-	var certificate tls.Certificate
-
-	for {
-		block, rest := pem.Decode(rawData)
-		if block == nil {
-			break
-		}
-
-		if block.Type != "CERTIFICATE" {
-			return nil, errBlockIsNotCertificate
-		}
-
-		certificate.Certificate = append(certificate.Certificate, block.Bytes)
-		rawData = rest
-	}
-
-	if len(certificate.Certificate) == 0 {
-		return nil, errNoCertificateFound
-	}
-
-	return &certificate, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }

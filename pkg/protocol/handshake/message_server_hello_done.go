@@ -9,16 +9,15 @@ package handshake
 type MessageServerHelloDone struct{}
 
 // Type returns the Handshake Type.
-func (m MessageServerHelloDone) Type() Type {
-	return TypeServerHelloDone
-}
+func (m MessageServerHelloDone) Type() Type { _ = "STUB: not implemented"; return *new(Type) }
 
 // Marshal encodes the Handshake.
 func (m *MessageServerHelloDone) Marshal() ([]byte, error) {
-	return []byte{}, nil
+	_ = "STUB: not implemented"
+	return nil,
+
+		// Unmarshal populates the message from encoded data.
+		nil
 }
 
-// Unmarshal populates the message from encoded data.
-func (m *MessageServerHelloDone) Unmarshal([]byte) error {
-	return nil
-}
+func (m *MessageServerHelloDone) Unmarshal([]byte) error { _ = "STUB: not implemented"; return nil }

@@ -7,9 +7,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"io"
-	"net"
-	"os"
 
 	"github.com/pion/dtls/v3/pkg/protocol"
 	"github.com/pion/dtls/v3/pkg/protocol/alert"
@@ -240,69 +237,24 @@ type invalidCipherSuiteError struct {
 	id CipherSuiteID
 }
 
-func (e *invalidCipherSuiteError) Error() string {
-	return fmt.Sprintf("CipherSuite with id(%d) is not valid", e.id)
-}
+func (e *invalidCipherSuiteError) Error() string { _ = "STUB: not implemented"; return "" }
 
-func (e *invalidCipherSuiteError) Is(err error) bool {
-	var other *invalidCipherSuiteError
-	if errors.As(err, &other) {
-		return e.id == other.id
-	}
-
-	return false
-}
+func (e *invalidCipherSuiteError) Is(err error) bool { _ = "STUB: not implemented"; return false }
 
 // errAlert wraps DTLS alert notification as an error.
 type alertError struct {
 	*alert.Alert
 }
 
-func (e *alertError) Error() string {
-	return fmt.Sprintf("alert: %s", e.Alert.String())
-}
+func (e *alertError) Error() string { _ = "STUB: not implemented"; return "" }
 
-func (e *alertError) IsFatalOrCloseNotify() bool {
-	return e.Level == alert.Fatal || e.Description == alert.CloseNotify
-}
+func (e *alertError) IsFatalOrCloseNotify() bool { _ = "STUB: not implemented"; return false }
 
-func (e *alertError) Is(err error) bool {
-	var other *alertError
-	if errors.As(err, &other) {
-		return e.Level == other.Level && e.Description == other.Description
-	}
-
-	return false
-}
+func (e *alertError) Is(err error) bool { _ = "STUB: not implemented"; return false }
 
 // netError translates an error from underlying Conn to corresponding net.Error.
-func netError(err error) error {
-	switch {
-	case errors.Is(err, io.EOF), errors.Is(err, context.Canceled), errors.Is(err, context.DeadlineExceeded):
-		// Return io.EOF and context errors as is.
-		return err
-	}
+func netError(err error) error { _ = "STUB: not implemented"; return nil }
 
-	var (
-		ne      net.Error
-		opError *net.OpError
-		se      *os.SyscallError
-	)
+// Return io.EOF and context errors as is.
 
-	if errors.As(err, &opError) { //nolint:nestif
-		if errors.As(opError, &se) {
-			if se.Timeout() {
-				return &TimeoutError{Err: err}
-			}
-			if isOpErrorTemporary(se) {
-				return &TemporaryError{Err: err}
-			}
-		}
-	}
-
-	if errors.As(err, &ne) {
-		return err
-	}
-
-	return &FatalError{Err: err}
-}
+//nolint:nestif

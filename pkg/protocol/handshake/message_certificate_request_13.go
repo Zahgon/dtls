@@ -4,10 +4,7 @@
 package handshake
 
 import (
-	"encoding/binary"
-
 	"github.com/pion/dtls/v3/pkg/protocol/extension"
-	"golang.org/x/crypto/cryptobyte"
 )
 
 // MessageCertificateRequest13 represents the CertificateRequest handshake message for DTLS 1.3.
@@ -25,9 +22,7 @@ type MessageCertificateRequest13 struct {
 }
 
 // Type returns the handshake message type.
-func (m MessageCertificateRequest13) Type() Type {
-	return TypeCertificateRequest
-}
+func (m MessageCertificateRequest13) Type() Type { _ = "STUB: not implemented"; return *new(Type) }
 
 const (
 	maxUint16                 = 0xffff
@@ -44,91 +39,30 @@ const (
 //	[2 bytes] extensions length (from extension.Marshal)
 //	[variable] extensions data
 func (m *MessageCertificateRequest13) Marshal() ([]byte, error) {
+	_ = "STUB: not implemented"
 	// Validate certificate_request_context length
-	if len(m.CertificateRequestContext) > certReq13ContextMaxLength {
-		return nil, errCertificateRequestContextTooLong
-	}
-
-	// Validate that signature_algorithms extension is present (required by RFC 8446)
-	hasSignatureAlgorithms := false
-	for _, ext := range m.Extensions {
-		if ext.TypeValue() == extension.SupportedSignatureAlgorithmsTypeValue {
-			hasSignatureAlgorithms = true
-
-			break
-		}
-	}
-	if !hasSignatureAlgorithms {
-		return nil, errMissingSignatureAlgorithmsExtension
-	}
-
-	var builder cryptobyte.Builder
-
-	// Add certificate_request_context (1-byte length prefix)
-	builder.AddUint8LengthPrefixed(func(b *cryptobyte.Builder) {
-		b.AddBytes(m.CertificateRequestContext)
-	})
-
-	// Marshal extensions (includes 2-byte length prefix, like in TLS 1.2)
-	extensionsData, err := extension.Marshal(m.Extensions)
-	if err != nil {
-		return nil, err
-	}
-	// Validate extensions length is in valid range <2..2^16-1>
-	if len(extensionsData) < 2 || len(extensionsData) > maxUint16 {
-		return nil, errInvalidExtensionsLength
-	}
-	builder.AddBytes(extensionsData)
-
-	return builder.Bytes()
+	return nil, nil
 }
+
+// Validate that signature_algorithms extension is present (required by RFC 8446)
+
+// Add certificate_request_context (1-byte length prefix)
+
+// Marshal extensions (includes 2-byte length prefix, like in TLS 1.2)
+
+// Validate extensions length is in valid range <2..2^16-1>
 
 // Unmarshal decodes the MessageCertificateRequest13 from its wire format.
 func (m *MessageCertificateRequest13) Unmarshal(data []byte) error {
+	_ = "STUB: not implemented"
 	// Validate minimum data length
-	if len(data) < certReq13MinLength {
-		return errBufferTooSmall
-	}
-
-	str := cryptobyte.String(data)
-
-	// Read certificate_request_context
-	var contextData cryptobyte.String
-	if !str.ReadUint8LengthPrefixed(&contextData) {
-		return errInvalidCertificateRequestContext
-	}
-	m.CertificateRequestContext = make([]byte, len(contextData))
-	copy(m.CertificateRequestContext, contextData)
-
-	// Read extensions length (2 bytes)
-	if len(str) < 2 {
-		return errInvalidExtensionsLength
-	}
-	extensionsLen := binary.BigEndian.Uint16(str[:2])
-
-	// Validate we have exactly extensionsLen bytes remaining after the length field
-	if len(str[2:]) != int(extensionsLen) {
-		return errLengthMismatch
-	}
-
-	var err error
-	m.Extensions, err = extension.Unmarshal([]byte(str))
-	if err != nil {
-		return err
-	}
-
-	// Validate that signature_algorithms extension is present (required by RFC 8446)
-	hasSignatureAlgorithms := false
-	for _, ext := range m.Extensions {
-		if ext.TypeValue() == extension.SupportedSignatureAlgorithmsTypeValue {
-			hasSignatureAlgorithms = true
-
-			break
-		}
-	}
-	if !hasSignatureAlgorithms {
-		return errMissingSignatureAlgorithmsExtension
-	}
-
 	return nil
 }
+
+// Read certificate_request_context
+
+// Read extensions length (2 bytes)
+
+// Validate we have exactly extensionsLen bytes remaining after the length field
+
+// Validate that signature_algorithms extension is present (required by RFC 8446)

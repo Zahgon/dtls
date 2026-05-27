@@ -16,5 +16,6 @@ const (
 
 // Has check if keyExchangeAlgorithm is supported.
 func (a KeyExchangeAlgorithm) Has(v KeyExchangeAlgorithm) bool {
-	return (a & v) == v
+	_ = "STUB: not implemented"
+	return false
 }

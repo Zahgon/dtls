@@ -4,9 +4,6 @@
 package ciphersuite
 
 import (
-	"crypto/aes"
-
-	"github.com/pion/dtls/v3/pkg/crypto/ccm"
 	"github.com/pion/dtls/v3/pkg/protocol/recordlayer"
 )
 
@@ -27,42 +24,18 @@ type CCM struct {
 
 // NewCCM creates a DTLS GCM Cipher.
 func NewCCM(tagLen CCMTagLen, localKey, localWriteIV, remoteKey, remoteWriteIV []byte) (*CCM, error) {
-	localBlock, err := aes.NewCipher(localKey)
-	if err != nil {
-		return nil, err
-	}
-	localCCM, err := ccm.NewCCM(localBlock, int(tagLen), ccmNonceLength)
-	if err != nil {
-		return nil, err
-	}
-
-	remoteBlock, err := aes.NewCipher(remoteKey)
-	if err != nil {
-		return nil, err
-	}
-	remoteCCM, err := ccm.NewCCM(remoteBlock, int(tagLen), ccmNonceLength)
-	if err != nil {
-		return nil, err
-	}
-
-	return &CCM{
-		aead: newAEAD(
-			localCCM,
-			localWriteIV,
-			remoteCCM,
-			remoteWriteIV,
-			ccmNonceLength,
-			int(tagLen),
-		),
-	}, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 // Encrypt encrypt a DTLS RecordLayer message.
 func (c *CCM) Encrypt(pkt *recordlayer.RecordLayer, raw []byte) ([]byte, error) {
-	return c.aead.encrypt(pkt, raw)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 // Decrypt decrypts a DTLS RecordLayer message.
 func (c *CCM) Decrypt(header recordlayer.Header, in []byte) ([]byte, error) {
-	return c.aead.decrypt(header, in)
+	_ = "STUB: not implemented"
+	return nil, nil
 }

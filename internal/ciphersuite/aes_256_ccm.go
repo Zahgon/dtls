@@ -21,21 +21,12 @@ func newAes256Ccm(
 	keyExchangeAlgorithm KeyExchangeAlgorithm,
 	ecc bool,
 ) *Aes256Ccm {
-	return &Aes256Ccm{
-		AesCcm: AesCcm{
-			clientCertificateType: clientCertificateType,
-			id:                    id,
-			psk:                   psk,
-			cryptoCCMTagLen:       cryptoCCMTagLen,
-			keyExchangeAlgorithm:  keyExchangeAlgorithm,
-			ecc:                   ecc,
-		},
-	}
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // Init initializes the internal Cipher with keying material.
 func (c *Aes256Ccm) Init(masterSecret, clientRandom, serverRandom []byte, isClient bool) error {
-	const prfKeyLen = 32
-
-	return c.AesCcm.Init(masterSecret, clientRandom, serverRandom, isClient, prfKeyLen)
+	_ = "STUB: not implemented"
+	return nil
 }

@@ -4,13 +4,10 @@
 package dtls
 
 import (
-	"bytes"
-	"encoding/gob"
 	"errors"
 	"sync/atomic"
 
 	"github.com/pion/dtls/v3/pkg/crypto/elliptic"
-	"github.com/pion/dtls/v3/pkg/crypto/prf"
 	"github.com/pion/dtls/v3/pkg/crypto/signaturehash"
 	"github.com/pion/dtls/v3/pkg/protocol/handshake"
 	"github.com/pion/transport/v4/replaydetector"
@@ -94,210 +91,65 @@ type serializedState struct {
 
 var errCipherSuiteNotSet = &InternalError{Err: errors.New("cipher suite not set")} //nolint:err113
 
-func (s *State) clone() (*State, error) {
-	serialized, err := s.serialize()
-	if err != nil {
-		return nil, err
-	}
-	state := &State{}
-	state.deserialize(*serialized)
+func (s *State) clone() (*State, error) { _ = "STUB: not implemented"; return nil, nil }
 
-	return state, err
-}
+func (s *State) serialize() (*serializedState, error) { _ = "STUB: not implemented"; return nil, nil }
 
-func (s *State) serialize() (*serializedState, error) {
-	if s.cipherSuite == nil {
-		return nil, errCipherSuiteNotSet
-	}
-	cipherSuiteID := uint16(s.cipherSuite.ID())
-
-	// Marshal random values
-	localRnd := s.localRandom.MarshalFixed()
-	remoteRnd := s.remoteRandom.MarshalFixed()
-
-	epoch := s.getLocalEpoch()
-
-	return &serializedState{
-		LocalEpoch:            s.getLocalEpoch(),
-		RemoteEpoch:           s.getRemoteEpoch(),
-		CipherSuiteID:         cipherSuiteID,
-		MasterSecret:          s.masterSecret,
-		SequenceNumber:        atomic.LoadUint64(&s.localSequenceNumber[epoch]),
-		LocalRandom:           localRnd,
-		RemoteRandom:          remoteRnd,
-		SRTPProtectionProfile: uint16(s.getSRTPProtectionProfile()),
-		PeerCertificates:      s.PeerCertificates,
-		IdentityHint:          s.IdentityHint,
-		SessionID:             s.SessionID,
-		LocalConnectionID:     s.getLocalConnectionID(),
-		RemoteConnectionID:    s.remoteConnectionID,
-		IsClient:              s.isClient,
-		NegotiatedProtocol:    s.NegotiatedProtocol,
-	}, nil
-}
+// Marshal random values
 
 func (s *State) deserialize(serialized serializedState) {
+	_ = "STUB: not implemented"
 	// Set epoch values
-	epoch := serialized.LocalEpoch
-	s.localEpoch.Store(serialized.LocalEpoch)
-	s.remoteEpoch.Store(serialized.RemoteEpoch)
-
-	for len(s.localSequenceNumber) <= int(epoch) {
-		s.localSequenceNumber = append(s.localSequenceNumber, uint64(0))
-	}
-
-	// Set random values
-	localRandom := &handshake.Random{}
-	localRandom.UnmarshalFixed(serialized.LocalRandom)
-	s.localRandom = *localRandom
-
-	remoteRandom := &handshake.Random{}
-	remoteRandom.UnmarshalFixed(serialized.RemoteRandom)
-	s.remoteRandom = *remoteRandom
-
-	s.isClient = serialized.IsClient
-
-	// Set master secret
-	s.masterSecret = serialized.MasterSecret
-
-	// Set cipher suite
-	s.CipherSuiteID = CipherSuiteID(serialized.CipherSuiteID)
-	s.cipherSuite = cipherSuiteForID(s.CipherSuiteID, nil)
-
-	atomic.StoreUint64(&s.localSequenceNumber[epoch], serialized.SequenceNumber)
-	s.setSRTPProtectionProfile(SRTPProtectionProfile(serialized.SRTPProtectionProfile))
-
-	// Set remote certificate
-	s.PeerCertificates = serialized.PeerCertificates
-
-	s.IdentityHint = serialized.IdentityHint
-
-	// Set local and remote connection IDs
-	s.setLocalConnectionID(serialized.LocalConnectionID)
-	s.remoteConnectionID = serialized.RemoteConnectionID
-
-	s.SessionID = serialized.SessionID
-
-	s.NegotiatedProtocol = serialized.NegotiatedProtocol
+	return
 }
 
-func (s *State) initCipherSuite() error {
-	if s.cipherSuite.IsInitialized() {
-		return nil
-	}
+// Set random values
 
-	localRandom := s.localRandom.MarshalFixed()
-	remoteRandom := s.remoteRandom.MarshalFixed()
+// Set master secret
 
-	var err error
-	if s.isClient {
-		err = s.cipherSuite.Init(s.masterSecret, localRandom[:], remoteRandom[:], true)
-	} else {
-		err = s.cipherSuite.Init(s.masterSecret, remoteRandom[:], localRandom[:], false)
-	}
-	if err != nil {
-		return err
-	}
+// Set cipher suite
 
-	return nil
-}
+// Set remote certificate
+
+// Set local and remote connection IDs
+
+func (s *State) initCipherSuite() error { _ = "STUB: not implemented"; return nil }
 
 // MarshalBinary is a binary.BinaryMarshaler.MarshalBinary implementation.
-func (s *State) MarshalBinary() ([]byte, error) {
-	serialized, err := s.serialize()
-	if err != nil {
-		return nil, err
-	}
-
-	var buf bytes.Buffer
-	enc := gob.NewEncoder(&buf)
-	if err := enc.Encode(*serialized); err != nil {
-		return nil, err
-	}
-
-	return buf.Bytes(), nil
-}
+func (s *State) MarshalBinary() ([]byte, error) { _ = "STUB: not implemented"; return nil, nil }
 
 // UnmarshalBinary is a binary.BinaryUnmarshaler.UnmarshalBinary implementation.
-func (s *State) UnmarshalBinary(data []byte) error {
-	enc := gob.NewDecoder(bytes.NewBuffer(data))
-	var serialized serializedState
-	if err := enc.Decode(&serialized); err != nil {
-		return err
-	}
-
-	s.deserialize(serialized)
-
-	return s.initCipherSuite()
-}
+func (s *State) UnmarshalBinary(data []byte) error { _ = "STUB: not implemented"; return nil }
 
 // ExportKeyingMaterial returns length bytes of exported key material in a new
 // slice as defined in RFC 5705.
 // This allows protocols to use DTLS for key establishment, but
 // then use some of the keying material for their own purposes.
 func (s *State) ExportKeyingMaterial(label string, context []byte, length int) ([]byte, error) {
-	if s.getLocalEpoch() == 0 {
-		return nil, errHandshakeInProgress
-	} else if len(context) != 0 {
-		return nil, errContextUnsupported
-	} else if _, ok := invalidKeyingLabels()[label]; ok {
-		return nil, errReservedExportKeyingMaterial
-	}
-
-	localRandom := s.localRandom.MarshalFixed()
-	remoteRandom := s.remoteRandom.MarshalFixed()
-
-	seed := []byte(label)
-	if s.isClient {
-		seed = append(append(seed, localRandom[:]...), remoteRandom[:]...)
-	} else {
-		seed = append(append(seed, remoteRandom[:]...), localRandom[:]...)
-	}
-
-	return prf.PHash(s.masterSecret, seed, length, s.cipherSuite.HashFunc())
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
-func (s *State) getRemoteEpoch() uint16 {
-	if remoteEpoch, ok := s.remoteEpoch.Load().(uint16); ok {
-		return remoteEpoch
-	}
+func (s *State) getRemoteEpoch() uint16 { _ = "STUB: not implemented"; return 0 }
 
-	return 0
-}
-
-func (s *State) getLocalEpoch() uint16 {
-	if localEpoch, ok := s.localEpoch.Load().(uint16); ok {
-		return localEpoch
-	}
-
-	return 0
-}
+func (s *State) getLocalEpoch() uint16 { _ = "STUB: not implemented"; return 0 }
 
 func (s *State) setSRTPProtectionProfile(profile SRTPProtectionProfile) {
-	s.srtpProtectionProfile.Store(profile)
+	_ = "STUB: not implemented"
+	return
 }
 
 func (s *State) getSRTPProtectionProfile() SRTPProtectionProfile {
-	if val, ok := s.srtpProtectionProfile.Load().(SRTPProtectionProfile); ok {
-		return val
-	}
-
-	return 0
+	_ = "STUB: not implemented"
+	return *new(SRTPProtectionProfile)
 }
 
-func (s *State) getLocalConnectionID() []byte {
-	if val, ok := s.localConnectionID.Load().([]byte); ok {
-		return val
-	}
+func (s *State) getLocalConnectionID() []byte { _ = "STUB: not implemented"; return nil }
 
-	return nil
-}
-
-func (s *State) setLocalConnectionID(v []byte) {
-	s.localConnectionID.Store(v)
-}
+func (s *State) setLocalConnectionID(v []byte) { _ = "STUB: not implemented"; return }
 
 // RemoteRandomBytes returns the remote client hello random bytes.
 func (s *State) RemoteRandomBytes() [handshake.RandomBytesLength]byte {
-	return s.remoteRandom.RandomBytes
+	_ = "STUB: not implemented"
+	return nil
 }

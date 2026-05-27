@@ -4,11 +4,7 @@
 package util
 
 import (
-	"bufio"
-	"fmt"
 	"net"
-	"os"
-	"strings"
 	"sync"
 )
 
@@ -19,66 +15,16 @@ type Hub struct {
 }
 
 // NewHub builds a new hub.
-func NewHub() *Hub {
-	return &Hub{conns: make(map[string]net.Conn)}
-}
+func NewHub() *Hub { _ = "STUB: not implemented"; return nil }
 
 // Register adds a new conn to the Hub.
-func (h *Hub) Register(conn net.Conn) {
-	fmt.Printf("Connected to %s\n", conn.RemoteAddr())
-	h.lock.Lock()
-	defer h.lock.Unlock()
+func (h *Hub) Register(conn net.Conn) { _ = "STUB: not implemented"; return }
 
-	h.conns[conn.RemoteAddr().String()] = conn
+func (h *Hub) readLoop(conn net.Conn) { _ = "STUB: not implemented"; return }
 
-	go h.readLoop(conn)
-}
+func (h *Hub) unregister(conn net.Conn) { _ = "STUB: not implemented"; return }
 
-func (h *Hub) readLoop(conn net.Conn) {
-	b := make([]byte, bufSize)
-	for {
-		n, err := conn.Read(b)
-		if err != nil {
-			h.unregister(conn)
-
-			return
-		}
-		fmt.Printf("Got message: %s\n", string(b[:n]))
-	}
-}
-
-func (h *Hub) unregister(conn net.Conn) {
-	h.lock.Lock()
-	defer h.lock.Unlock()
-	delete(h.conns, conn.RemoteAddr().String())
-	err := conn.Close()
-	if err != nil {
-		fmt.Println("Failed to disconnect", conn.RemoteAddr(), err)
-	} else {
-		fmt.Println("Disconnected ", conn.RemoteAddr())
-	}
-}
-
-func (h *Hub) broadcast(msg []byte) {
-	h.lock.RLock()
-	defer h.lock.RUnlock()
-	for _, conn := range h.conns {
-		_, err := conn.Write(msg)
-		if err != nil {
-			fmt.Printf("Failed to write message to %s: %v\n", conn.RemoteAddr(), err)
-		}
-	}
-}
+func (h *Hub) broadcast(msg []byte) { _ = "STUB: not implemented"; return }
 
 // Chat starts the stdin readloop to dispatch messages to the hub.
-func (h *Hub) Chat() {
-	reader := bufio.NewReader(os.Stdin)
-	for {
-		msg, err := reader.ReadString('\n')
-		Check(err)
-		if strings.TrimSpace(msg) == "exit" {
-			return
-		}
-		h.broadcast([]byte(msg))
-	}
-}
+func (h *Hub) Chat() { _ = "STUB: not implemented"; return }

@@ -3,12 +3,6 @@
 
 package extension
 
-import (
-	"slices"
-
-	"golang.org/x/crypto/cryptobyte"
-)
-
 // ALPN is a TLS extension for application-layer protocol negotiation within
 // the TLS handshake.
 //
@@ -19,72 +13,22 @@ type ALPN struct {
 
 // TypeValue returns the extension TypeValue.
 func (a ALPN) TypeValue() TypeValue {
-	return ALPNTypeValue
+	_ = "STUB: not implemented"
+	return *
+
+	// Marshal encodes the extension.
+	new(TypeValue)
 }
 
-// Marshal encodes the extension.
-func (a *ALPN) Marshal() ([]byte, error) {
-	var builder cryptobyte.Builder
-	builder.AddUint16(uint16(a.TypeValue()))
-	builder.AddUint16LengthPrefixed(func(b *cryptobyte.Builder) {
-		b.AddUint16LengthPrefixed(func(b *cryptobyte.Builder) {
-			for _, proto := range a.ProtocolNameList {
-				p := proto // Satisfy range scope lint
-				b.AddUint8LengthPrefixed(func(b *cryptobyte.Builder) {
-					b.AddBytes([]byte(p))
-				})
-			}
-		})
-	})
+func (a *ALPN) Marshal() ([]byte, error) { _ = "STUB: not implemented"; return nil, nil }
 
-	return builder.Bytes()
-}
+// Satisfy range scope lint
 
 // Unmarshal populates the extension from encoded data.
-func (a *ALPN) Unmarshal(data []byte) error {
-	val := cryptobyte.String(data)
-
-	var extension uint16
-	val.ReadUint16(&extension)
-	if TypeValue(extension) != a.TypeValue() {
-		return errInvalidExtensionType
-	}
-
-	var extData cryptobyte.String
-	if !val.ReadUint16LengthPrefixed(&extData) {
-		return errLengthMismatch
-	}
-
-	var protoList cryptobyte.String
-	if !extData.ReadUint16LengthPrefixed(&protoList) || protoList.Empty() {
-		return ErrALPNInvalidFormat
-	}
-
-	if !extData.Empty() {
-		return errLengthMismatch
-	}
-
-	for !protoList.Empty() {
-		var proto cryptobyte.String
-		if !protoList.ReadUint8LengthPrefixed(&proto) || proto.Empty() {
-			return ErrALPNInvalidFormat
-		}
-		a.ProtocolNameList = append(a.ProtocolNameList, string(proto))
-	}
-
-	return nil
-}
+func (a *ALPN) Unmarshal(data []byte) error { _ = "STUB: not implemented"; return nil }
 
 // ALPNProtocolSelection negotiates a shared protocol according to #3.2 of rfc7301.
 func ALPNProtocolSelection(supportedProtocols, peerSupportedProtocols []string) (string, error) {
-	if len(supportedProtocols) == 0 || len(peerSupportedProtocols) == 0 {
-		return "", nil
-	}
-	for _, s := range supportedProtocols {
-		if slices.Contains(peerSupportedProtocols, s) {
-			return s, nil
-		}
-	}
-
-	return "", errALPNNoAppProto
+	_ = "STUB: not implemented"
+	return "", nil
 }

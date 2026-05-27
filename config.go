@@ -4,10 +4,6 @@
 package dtls
 
 import (
-	"crypto"
-	"crypto/ecdsa"
-	"crypto/ed25519"
-	"crypto/rsa"
 	"crypto/tls"
 	"crypto/x509"
 	"io"
@@ -243,9 +239,7 @@ type Config struct { //nolint:dupl
 	maxVersion protocol.Version
 }
 
-func (c *Config) includeCertificateSuites() bool {
-	return c.PSK == nil || len(c.Certificates) > 0 || c.GetCertificate != nil || c.GetClientCertificate != nil
-}
+func (c *Config) includeCertificateSuites() bool { _ = "STUB: not implemented"; return false }
 
 const defaultMTU = 1200 // bytes
 
@@ -279,36 +273,7 @@ const (
 	DisableExtendedMasterSecret
 )
 
-func validateConfig(config *Config) error { //nolint:cyclop
-	switch {
-	case config == nil:
-		return errNoConfigProvided
-	case config.PSKIdentityHint != nil && config.PSK == nil:
-		return errIdentityNoPSK
-	}
-
-	for _, cert := range config.Certificates {
-		if cert.Certificate == nil {
-			return errInvalidCertificate
-		}
-		if cert.PrivateKey != nil {
-			signer, ok := cert.PrivateKey.(crypto.Signer)
-			if !ok {
-				return errInvalidPrivateKey
-			}
-			switch signer.Public().(type) {
-			case ed25519.PublicKey:
-			case *ecdsa.PublicKey:
-			case *rsa.PublicKey:
-			default:
-				return errInvalidPrivateKey
-			}
-		}
-	}
-
-	_, err := parseCipherSuites(
-		config.CipherSuites, config.CustomCipherSuites, config.includeCertificateSuites(), config.PSK != nil,
-	)
-
-	return err
+func validateConfig(config *Config) error {
+	_ = "STUB: not implemented" //nolint:cyclop
+	return nil
 }

@@ -4,10 +4,6 @@
 // Package extension implements the extension values in the ClientHello/ServerHello
 package extension
 
-import (
-	"encoding/binary"
-)
-
 // TypeValue is the 2 byte value for a TLS Extension as registered in the IANA
 //
 // https://www.iana.org/assignments/tls-extensiontype-values/tls-extensiontype-values.xhtml
@@ -45,92 +41,14 @@ type Extension interface {
 }
 
 // Unmarshal many extensions at once.
-func Unmarshal(buf []byte) ([]Extension, error) { //nolint:cyclop
-	switch {
-	case len(buf) == 0:
-		return []Extension{}, nil
-	case len(buf) < 2:
-		return nil, errBufferTooSmall
-	}
-
-	declaredLen := binary.BigEndian.Uint16(buf)
-	if len(buf)-2 != int(declaredLen) {
-		return nil, errLengthMismatch
-	}
-
-	extensions := []Extension{}
-	unmarshalAndAppend := func(data []byte, e Extension) error {
-		err := e.Unmarshal(data)
-		if err != nil {
-			return err
-		}
-		extensions = append(extensions, e)
-
-		return nil
-	}
-
-	for offset := 2; offset < len(buf); {
-		bufView := buf[offset:] //nolint:gosec // offset bounded by loop condition
-		if len(bufView) < 2 {
-			return nil, errBufferTooSmall
-		}
-
-		var err error
-		switch TypeValue(binary.BigEndian.Uint16(bufView)) {
-		case ServerNameTypeValue:
-			err = unmarshalAndAppend(bufView, &ServerName{})
-		case SupportedEllipticCurvesTypeValue:
-			err = unmarshalAndAppend(bufView, &SupportedEllipticCurves{})
-		case SupportedPointFormatsTypeValue:
-			err = unmarshalAndAppend(bufView, &SupportedPointFormats{})
-		case SupportedSignatureAlgorithmsTypeValue:
-			err = unmarshalAndAppend(bufView, &SupportedSignatureAlgorithms{})
-		case SignatureAlgorithmsCertTypeValue:
-			err = unmarshalAndAppend(bufView, &SignatureAlgorithmsCert{})
-		case UseSRTPTypeValue:
-			err = unmarshalAndAppend(bufView, &UseSRTP{})
-		case ALPNTypeValue:
-			err = unmarshalAndAppend(bufView, &ALPN{})
-		case UseExtendedMasterSecretTypeValue:
-			err = unmarshalAndAppend(bufView, &UseExtendedMasterSecret{})
-		case RenegotiationInfoTypeValue:
-			err = unmarshalAndAppend(bufView, &RenegotiationInfo{})
-		case ConnectionIDTypeValue:
-			err = unmarshalAndAppend(bufView, &ConnectionID{})
-		case SupportedVersionsTypeValue:
-			err = unmarshalAndAppend(bufView, &SupportedVersions{})
-		case KeyShareTypeValue:
-			err = unmarshalAndAppend(bufView, &KeyShare{})
-		case CookieTypeValue:
-			err = unmarshalAndAppend(bufView, &CookieExt{})
-		default:
-		}
-
-		if err != nil {
-			return nil, err
-		}
-		if len(bufView) < 4 {
-			return nil, errBufferTooSmall
-		}
-		extensionLength := binary.BigEndian.Uint16(bufView[2:])
-		offset += (4 + int(extensionLength))
-	}
-
-	return extensions, nil
+func Unmarshal(buf []byte) ([]Extension, error) {
+	_ = "STUB: not implemented" //nolint:cyclop
+	return nil, nil
 }
+
+//nolint:gosec // offset bounded by loop condition
 
 // Marshal many extensions at once.
-func Marshal(e []Extension) ([]byte, error) {
-	extensions := []byte{}
-	for _, e := range e {
-		raw, err := e.Marshal()
-		if err != nil {
-			return nil, err
-		}
-		extensions = append(extensions, raw...)
-	}
-	out := []byte{0x00, 0x00}
-	binary.BigEndian.PutUint16(out, uint16(len(extensions))) //nolint:gosec // G115
+func Marshal(e []Extension) ([]byte, error) { _ = "STUB: not implemented"; return nil, nil }
 
-	return append(out, extensions...), nil
-}
+//nolint:gosec // G115

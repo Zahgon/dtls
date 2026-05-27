@@ -6,7 +6,6 @@ package handshake
 
 import (
 	"github.com/pion/dtls/v3/internal/ciphersuite/types"
-	"github.com/pion/dtls/v3/internal/util"
 	"github.com/pion/dtls/v3/pkg/protocol"
 )
 
@@ -30,32 +29,8 @@ const (
 )
 
 // String returns the string representation of this type.
-func (t Type) String() string { //nolint:cyclop
-	switch t {
-	case TypeHelloRequest:
-		return "HelloRequest"
-	case TypeClientHello:
-		return "ClientHello"
-	case TypeServerHello:
-		return "ServerHello"
-	case TypeHelloVerifyRequest:
-		return "HelloVerifyRequest"
-	case TypeCertificate:
-		return "TypeCertificate"
-	case TypeServerKeyExchange:
-		return "ServerKeyExchange"
-	case TypeCertificateRequest:
-		return "CertificateRequest"
-	case TypeServerHelloDone:
-		return "ServerHelloDone"
-	case TypeCertificateVerify:
-		return "CertificateVerify"
-	case TypeClientKeyExchange:
-		return "ClientKeyExchange"
-	case TypeFinished:
-		return "Finished"
-	}
-
+func (t Type) String() string {
+	_ = "STUB: not implemented" //nolint:cyclop
 	return ""
 }
 
@@ -81,72 +56,19 @@ type Handshake struct {
 
 // ContentType returns what kind of content this message is carying.
 func (h Handshake) ContentType() protocol.ContentType {
-	return protocol.ContentTypeHandshake
+	_ = "STUB: not implemented"
+	return *new(protocol.ContentType)
 }
 
 // Marshal encodes a handshake into a binary message.
-func (h *Handshake) Marshal() ([]byte, error) {
-	if h.Message == nil {
-		return nil, errHandshakeMessageUnset
-	} else if h.Header.FragmentOffset != 0 {
-		return nil, errUnableToMarshalFragmented
-	}
+func (h *Handshake) Marshal() ([]byte, error) { _ = "STUB: not implemented"; return nil, nil }
 
-	msg, err := h.Message.Marshal()
-	if err != nil {
-		return nil, err
-	}
-
-	h.Header.Length = uint32(len(msg)) //nolint:gosec // G115
-	h.Header.FragmentLength = h.Header.Length
-	h.Header.Type = h.Message.Type()
-	header, err := h.Header.Marshal()
-	if err != nil {
-		return nil, err
-	}
-
-	return append(header, msg...), nil
-}
+//nolint:gosec // G115
 
 // Unmarshal decodes a handshake from a binary message.
-func (h *Handshake) Unmarshal(data []byte) error { //nolint:cyclop
-	if err := h.Header.Unmarshal(data); err != nil {
-		return err
-	}
-
-	reportedLen := util.BigEndianUint24(data[1:])
-	if uint32(len(data)-HeaderLength) != reportedLen { //nolint:gosec // G115
-		return errLengthMismatch
-	} else if reportedLen != h.Header.FragmentLength {
-		return errLengthMismatch
-	}
-
-	switch Type(data[0]) {
-	case TypeHelloRequest:
-		return errNotImplemented
-	case TypeClientHello:
-		h.Message = &MessageClientHello{}
-	case TypeHelloVerifyRequest:
-		h.Message = &MessageHelloVerifyRequest{}
-	case TypeServerHello:
-		h.Message = &MessageServerHello{}
-	case TypeCertificate:
-		h.Message = &MessageCertificate{}
-	case TypeServerKeyExchange:
-		h.Message = &MessageServerKeyExchange{KeyExchangeAlgorithm: h.KeyExchangeAlgorithm}
-	case TypeCertificateRequest:
-		h.Message = &MessageCertificateRequest{}
-	case TypeServerHelloDone:
-		h.Message = &MessageServerHelloDone{}
-	case TypeClientKeyExchange:
-		h.Message = &MessageClientKeyExchange{KeyExchangeAlgorithm: h.KeyExchangeAlgorithm}
-	case TypeFinished:
-		h.Message = &MessageFinished{}
-	case TypeCertificateVerify:
-		h.Message = &MessageCertificateVerify{}
-	default:
-		return errNotImplemented
-	}
-
-	return h.Message.Unmarshal(data[HeaderLength:])
+func (h *Handshake) Unmarshal(data []byte) error {
+	_ = "STUB: not implemented" //nolint:cyclop
+	return nil
 }
+
+//nolint:gosec // G115
